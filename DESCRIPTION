@@ -1,0 +1,39 @@
+Package: usefun
+Type: Package
+Title: Useful functions for my modules and packages
+Version: 0.1.0
+Author: Tati Micheletti
+Maintainer: Tati Micheletti <tati.micheletti@gmail.com>
+Description: Few functions and wrappers around useful code
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1.9000
+Imports: LandR,
+         SpaDES.core, 
+         SpaDES.tools,
+         crayon,
+         data.table,
+         raster,
+         reproducible
+Collate: 
+    'grepMulti.R'
+    'bringObjectTS.R'
+    'burnFromAge.R'
+    'changeTraits.R'
+    'classifyWetlands.R'
+    'nameAndBringOn.R'
+    'createDynamicLayersRSF.R'
+    'createEquation.R'
+    'createModObject.R'
+    'createModels.R'
+    'createShrubHerbLayers.R'
+    'createStaticLayersRSF.R'
+    'defineStudyArea.R'
+    'getLayers.R'
+    'makeReclassifyMatrix.R'
+    'prepInputStack.R'
+    'prepInputsLayers_DUCKS.R'
+    'setTempFolder.R'
+    'subsetNonNARas.R'
+    'substrBoth.R'
