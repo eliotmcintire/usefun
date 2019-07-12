@@ -30,6 +30,7 @@
 #' @importFrom reproducible prepInputs postProcess Require
 #' @include createDynamicLayersRSF.R
 #' @include createStaticLayersRSF.R
+#' @include extractDisturbanceFast.R
 #'
 #' @rdname getLayers
 
