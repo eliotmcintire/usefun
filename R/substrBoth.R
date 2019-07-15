@@ -12,7 +12,7 @@
 #' @rdname substrBoth
 
 substrBoth <- function(string, howManyCharacters, fromEnd = TRUE){
-  if (fromEnd) return(substr(string, nchar(string)-string+1, nchar(string))) else
+  if (fromEnd) return(substr(x = string, start = nchar(string) - howManyCharacters+1, nchar(string))) else
   return(substr(x = string, start = 1, stop = nchar(string)-string))
 }
 

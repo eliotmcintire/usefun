@@ -78,7 +78,7 @@ getLayers <- function(currentTime,
   if (!isRSF){
     listDistForEachShpForEachPoly <- lapply(X = names(listSACaribou), FUN = function(caribouShapefile){
       message("Calculating disturbance for ", caribouShapefile)
-      listPolyDist <- extractDisturbanceFast(ageMap = ageMap,
+      listPolyDist <- usefun::extractDisturbanceFast(ageMap = ageMap,
                             caribouShapefile = listSACaribou[[caribouShapefile]],
                             recoveryTime = recoveryTime,
                             anthropogenicLayer = anthropogenicLayer,
