@@ -38,7 +38,7 @@ bringObjectTS <- function(path,
     return(eachRas)
   })
   y <- unlist(lapply(filesToLoad, function(f){
-    nm <- substrBoth(string = tools::file_path_sans_ext(f), howManyCharacters = 4, fromEnd = TRUE)
+    nm <- substrBoth(strng = tools::file_path_sans_ext(f), howManyCharacters = 4, fromEnd = TRUE)
     }))
   names(allRas) <- paste0("Year", y)
   return(allRas)
