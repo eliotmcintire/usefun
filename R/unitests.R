@@ -1,0 +1,12 @@
+# FUTURE UNIT TESTS FOR provinceBCRStudyArea
+# BCR8_ON <- provinceBCRStudyArea(bcr = 8, province = "Ontario", country = "CAN")
+# BCR8 <- provinceBCRStudyArea(bcr = 8, province = NULL, country = "CAN")
+# ON <- provinceBCRStudyArea(bcr = NULL, province = "Ontario", country = "CAN")
+# BCR6_BC_AB <- provinceBCRStudyArea(bcr = 6, province = c("Alberta", "British Columbia"), country = "CAN")
+# BRA <- provinceBCRStudyArea(bcr = NULL, province = NULL, country = "BRA")
+# crazyCountry <- provinceBCRStudyArea(bcr = NULL, province = NULL, country = "CRAZY")
+# crazyBCR <- provinceBCRStudyArea(bcr = 9878976, province = NULL, country = "CAN")
+# crazyProv <- provinceBCRStudyArea(bcr = NULL, province = "Blablab", country = "CAN")
+# crazyBoth <- provinceBCRStudyArea(bcr = 9878976, province = "Blablab", country = "CAN")
+# twoProv <- provinceBCRStudyArea(bcr = NULL, province = c("Alberta", "British Columbia"), country = "CAN")
+# oneGoodProv <- provinceBCRStudyArea(bcr = NULL, province = c("Alberta", "Blablab"), country = "CAN")
