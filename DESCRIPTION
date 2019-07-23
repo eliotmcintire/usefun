@@ -36,6 +36,7 @@ Collate:
     'makeReclassifyMatrix.R'
     'prepInputStack.R'
     'prepInputsLayers_DUCKS.R'
+    'provinceBCRStudyArea.R'
     'setTempFolder.R'
     'subsetNonNARas.R'
     'substrBoth.R'
