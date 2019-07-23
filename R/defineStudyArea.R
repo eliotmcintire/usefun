@@ -24,6 +24,7 @@
 #' @author Tati Micheletti and Geneviève Degré-Timmons
 #' @export
 #' @importFrom SpaDES.tools randomPolygon
+#' @importFrom magrittr %>%
 #' @importFrom reproducible prepInputs
 #' @rdname defineStudyArea
 #'
@@ -39,10 +40,10 @@ defineStudyArea <- function(testArea = NULL, specificTestArea = NULL, mapSubset 
                               testArea == FALSE))) {
     if (!is.null(specificTestArea)) {
       warning(crayon::yellow(paste0(
-        "Test area is FALSE or NULL, but specificTestArea is not. Ignoring 'specificTestArea' and running the analysis without a study area. ",
+        "Test area is FALSE or NULL, but specificTestArea is not. Ignoring 'specificTestArea' and running the shapefile without a study area. ",
         "To set a study area, use testArea == TRUE.")))
     } else {
-      message(crayon::yellow("Test area is FALSE or NULL. Running the analysis without a study area."))
+      message(crayon::yellow("Test area is FALSE or NULL. Running the shapefile without a study area."))
     }
   } else {
     if (is.null(specificTestArea)) {
@@ -72,7 +73,7 @@ defineStudyArea <- function(testArea = NULL, specificTestArea = NULL, mapSubset 
           dots$targetFile <- "BCR6.shp"
           dots$url <- "https://drive.google.com/open?id=1sEiXKnAOCi-f1BF7b4kTg-6zFlGr0YOH"
           dots$studyArea <- sA
-          rP <- reproducible::prepInputs(targetFile = dots$targetFile, url = dots$url, studyArea = dots$studyArea, dots)
+          rP <- do.call(reproducible::prepInputs, dots)
           return(rP)
         } else {
         }
