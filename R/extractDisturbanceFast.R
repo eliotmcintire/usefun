@@ -13,8 +13,6 @@
 #' @export
 #' @include calculatePixelsInaRule.R
 #' @importFrom crayon red
-#' @importFrom sf st_as_sf
-#' @importFrom fasterize fasterize
 #' @importFrom raster raster stack
 #' @importFrom reproducible postProcess
 #' @rdname extractDisturbanceFast

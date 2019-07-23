@@ -72,7 +72,7 @@ defineStudyArea <- function(testArea = NULL, specificTestArea = NULL, mapSubset 
           dots$targetFile <- "BCR6.shp"
           dots$url <- "https://drive.google.com/open?id=1sEiXKnAOCi-f1BF7b4kTg-6zFlGr0YOH"
           dots$studyArea <- sA
-          rP <- do.call(reproducible::prepInputs, dots)
+          rP <- reproducible::prepInputs(targetFile = dots$targetFile, url = dots$url, studyArea = dots$studyArea, dots)
           return(rP)
         } else {
         }
