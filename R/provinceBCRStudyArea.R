@@ -56,7 +56,7 @@ provinceBCRStudyArea <- function(bcr = NULL, province = NULL, country, ...) {
         if (length(BCRshp) == 0) stop("The BCR ", bcr, " doesn't exist in ", country)
         return(BCRshp)
       } else {
-        message(crayon::yellow("Both BCR and province provided. Returning the map of BCR ", BCR, " for ",
+        message(crayon::yellow("Both BCR and province provided. Returning the map of BCR ", bcr, " for ",
                                paste(province, collapse = "; "), " in ", country))
         provs <- raster::getData(name = "GADM", download = TRUE, country = country, level = 1)  %>%
           raster::subset(NAME_1 %in% province)
