@@ -15,13 +15,16 @@ Imports: LandR,
          crayon,
          data.table,
          raster,
-         reproducible
+         reproducible,
+         magrittr,
+         remotes
 Collate: 
     'grepMulti.R'
     'bringObjectTS.R'
     'burnFromAge.R'
     'calculatePixelsInaRule.R'
     'changeTraits.R'
+    'checkPackagesVersions.R'
     'classifyWetlands.R'
     'nameAndBringOn.R'
     'createDynamicLayersRSF.R'
