@@ -4,10 +4,10 @@
 \alias{substrBoth}
 \title{substrBoth get a sub-string based on the number of characters and the side to start}
 \usage{
-substrBoth(string, howManyCharacters, fromEnd = TRUE)
+substrBoth(strng, howManyCharacters, fromEnd = TRUE)
 }
 \arguments{
-\item{string}{String from which to grab a subset}
+\item{strng}{String from which to grab a subset}
 
 \item{howManyCharacters}{numeric. How many characters should be returned in the sub-string?}
 

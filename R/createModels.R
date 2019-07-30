@@ -15,11 +15,6 @@
 #' @importFrom data.table data.table
 #' @include createEquation.R
 #' @rdname createModels
-#'
-#' # Examples
-#' # m3 <- createModels()
-#' # DH_Total <- 50
-#' # calculatingModel <- eval(parse(text = m3$M3))
 
 createModels <- function(caribouCoefTable = NULL,
                          modelsToUse = "M3"){

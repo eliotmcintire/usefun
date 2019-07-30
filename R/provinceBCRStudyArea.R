@@ -25,10 +25,6 @@
 #' @importFrom crayon yellow
 #' @rdname provinceBCRStudyArea
 #'
-#' # Examples
-#' # BCR6_NWT <- provinceBCRStudyArea(bcr = 6, province = "Northwest Territories", country = "CAN")
-#' # BCR8_ON <- provinceBCRStudyArea(bcr = 8, province = "Ontario", country = "CAN")
-#' # BCR6_BC_AB <- provinceBCRStudyArea(bcr = 6, province = c("Alberta", "British Columbia"), country = "CAN")
 
 provinceBCRStudyArea <- function(bcr = NULL, province = NULL, country, ...) {
   dots <- list(...)

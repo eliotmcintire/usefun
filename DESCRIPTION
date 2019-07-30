@@ -23,6 +23,7 @@ Collate:
     'bringObjectTS.R'
     'burnFromAge.R'
     'calculatePixelsInaRule.R'
+    'cbindFromList.R'
     'changeTraits.R'
     'checkPackagesVersions.R'
     'classifyWetlands.R'

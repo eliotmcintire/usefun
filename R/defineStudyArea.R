@@ -27,11 +27,6 @@
 #' @importFrom magrittr %>%
 #' @importFrom reproducible prepInputs
 #' @rdname defineStudyArea
-#'
-#' # Examples
-#' # rp <- defineStudyArea(testArea = TRUE, specificTestArea = "BCR6", mapSubset = NULL) ## rp is the whole Boreal Taiga plains Bird conservation regions (BCR6)
-#' # rp <- defineStudyArea(testArea = TRUE, specificTestArea = "Northwest Territories", mapSubset = NULL) ## Northwest Territories
-#' # rp <- defineStudyArea(testArea = TRUE, specificTestArea = "BCR6", mapSubset = "Northwest Territories") ## Nortwest Territories inside BCR6
 
 defineStudyArea <- function(testArea = NULL, specificTestArea = NULL, mapSubset = NULL, ...) {
   dots <- list(...)

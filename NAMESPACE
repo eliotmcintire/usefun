@@ -2,6 +2,7 @@
 
 export(bringObjectTS)
 export(calculatePixelsInaRule)
+export(cbindFromList)
 export(changeTraits)
 export(checkPackagesVersions)
 export(classifyWetlands)
