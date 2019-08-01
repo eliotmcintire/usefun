@@ -8,7 +8,8 @@
 #' @param endTime numeric. endTime of the simulation. Needed to verify and potentially adjust relative simulation times.
 #' @param recoveryTime numeric. Recovery time in years that the forest needs to support Caribou. Default = 40.
 #' @param listSACaribou list of shapefiles with polygons for which we want to calculate lambda for the caribou demographic model.
-#' @param anthropogenicLayer Anthropogenic disturbance (raster) layer. Currently, road density layer used for both RSF and demographic models.
+#' @param anthropogenicLayer Anthropogenic disturbance (raster) layer. Currently, 500m buffered anthropogenic disturbance for demographic models.
+#' @param roadDensity Anthropogenic disturbance (raster) layer. Currently, road density layer used for RSF models.
 #' @param waterRaster Raster layer indicating water bodies.
 #' @param isRSF logical. Identify if it should get the layers for the RSF or demographic model.
 #' @param decidousSp binary raster layer indicating if the dominant biomass in a pixel belongs to a deciduous species.
@@ -35,16 +36,17 @@
 #' @rdname getLayers
 
 getLayers <- function(currentTime,
-                           cohortData, # Has age info per pixel group
-                           pixelGroupMap, #Map of pixel groups
-                           startTime,
-                           endTime,
-                           recoveryTime = 40,
-                           listSACaribou,
-                           anthropogenicLayer,
-                           waterRaster,
-                           isRSF = FALSE,
-                           decidousSp = NULL,
+                      cohortData, # Has age info per pixel group
+                      pixelGroupMap, #Map of pixel groups
+                      startTime,
+                      endTime,
+                      recoveryTime = 40,
+                      listSACaribou,
+                      anthropogenicLayer,
+                      roadDensity,
+                      waterRaster,
+                      isRSF = FALSE,
+                      decidousSp = NULL,
                       oldBurnTime = NULL,
                       elevation = NULL,
                       vrug = NULL,
@@ -111,7 +113,7 @@ getLayers <- function(currentTime,
                                             oldBurnTime = oldBurnTime,
                                             oldBurnName = "OldBurn",
                                             newBurnName = "RecentBurn",
-                                            roadDensity = anthropogenicLayer,
+                                            roadDensity = roadDensity,
                                             roadDensityName = "RoadDensity",
                                             waterRaster = waterRaster,
                                             waterRasterName = "Water",
@@ -130,14 +132,6 @@ getLayers <- function(currentTime,
 
     # We need to override the LandR_Biomass pixels with deciduous trees that were originally classified as
     # "herbaceous" by ECCC
-    # We also need to mask the decidous to ONLY FOREST PIXELS!!
-    # [UPDATE on 7th June] I will try not to mask it.
-    # LandR should be providing way better estimates of biomass for non-forest pixels. Therefore next line is commented out
-    # staticLayers[["Deciduous"]] <- postProcess(x = staticLayers[["Deciduous"]], rasterToMatch = forestOnly, maskWithRTM = TRUE,
-    #                                        destinationPath = tempdir(), useCache = FALSE, filename2 = NULL)
-
-    # This forestOnly layer excludes water too. However, for the RSF models we need to put these back,
-    # so add back the pixels as 0 from staticLayer[["Water"]] == 1
     staticLayers[["Deciduous"]][dynamicLayers[["Water"]] == 1] <- 0
 
     dynamicLayers[["Deciduous"]] <- staticLayers[["Deciduous"]]

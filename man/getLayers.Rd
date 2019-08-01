@@ -6,8 +6,8 @@
 It is a function designed to work inside a SpaDES module.}
 \usage{
 getLayers(currentTime, cohortData, pixelGroupMap, startTime, endTime,
-  recoveryTime = 40, listSACaribou, anthropogenicLayer, waterRaster,
-  isRSF = FALSE, decidousSp = NULL, oldBurnTime = NULL,
+  recoveryTime = 40, listSACaribou, anthropogenicLayer, roadDensity,
+  waterRaster, isRSF = FALSE, decidousSp = NULL, oldBurnTime = NULL,
   elevation = NULL, vrug = NULL, LCC05 = NULL, reclassLCC05 = NULL,
   rasterToMatch = NULL)
 }
@@ -26,7 +26,9 @@ getLayers(currentTime, cohortData, pixelGroupMap, startTime, endTime,
 
 \item{listSACaribou}{list of shapefiles with polygons for which we want to calculate lambda for the caribou demographic model.}
 
-\item{anthropogenicLayer}{Anthropogenic disturbance (raster) layer. Currently, road density layer used for both RSF and demographic models.}
+\item{anthropogenicLayer}{Anthropogenic disturbance (raster) layer. Currently, 500m buffered anthropogenic disturbance for demographic models.}
+
+\item{roadDensity}{Anthropogenic disturbance (raster) layer. Currently, road density layer used for RSF models.}
 
 \item{waterRaster}{Raster layer indicating water bodies.}
 
