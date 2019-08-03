@@ -4,6 +4,8 @@
 #'
 #' @param data character string of the object or file name to be searched for
 #'
+#' @param fun function to be used to recover the file. Default is `readRDS`
+#'
 #' @param sim simList. Default is `NULL`.
 #'
 #' @param pathInput path to the directory containing the files to be searched for.
@@ -21,7 +23,7 @@
 #' @importFrom SpaDES.core paddedFloatToChar
 #' @rdname createModObject
 
-createModObject <- function(data, sim = NULL, pathInput, currentTime){
+createModObject <- function(data, sim = NULL, pathInput, currentTime, fun = readRDS){
   if (all(is.null(sim), is.null(pathInput)))
     stop("Either a simList or a folder containing the data need to be supplied")
   dt <- NULL
@@ -41,7 +43,7 @@ createModObject <- function(data, sim = NULL, pathInput, currentTime){
     if (length(dataName) == 0){
       dt <- NULL
     } else {
-      dt <- readRDS(file.path(pathInput, dataName))
+      dt <- do.call(what = fun, args = list(file.path(pathInput, dataName)))
     }
     if (!is.null(dt))
       message(paste0(data, " loaded from " ,
