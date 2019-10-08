@@ -28,7 +28,7 @@
 #'
 #' @param doughtMonths numeric. Months for fireSense to calculate MonthDoughtCode (MDC) i.e. `4:9`.
 #'
-#' @param returnCalculatedLayersForFireSense Logical. Should it calculate MDC (TRUE) or return the original variables (FALSE)?
+#' @param returnCalculatedLayersForFireSense Logical. Should it calculate MDC (TRUE) or return the original variables (FALSE)? Default is FALSE.
 #'
 #' @return This function returns a list of all years, with each year being the local path for the raster stack that contains all variables
 #'
@@ -242,7 +242,7 @@ yearsList <- lapply(X = years, FUN = function(y){
             '9' = 30)[[as.character(month)]]
         }
 
-        MDC06 <- Cache(calc, climateLayers, fun = function(x){
+        MDC06 <- Cache(calc, variablesStack, fun = function(x){
           MDC_0 <- 0
           for (month in doughtMonths){
             PPT <- x[[paste0("PPT0", month)]]
