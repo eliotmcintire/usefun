@@ -30,6 +30,8 @@
 #'
 #' @param returnCalculatedLayersForFireSense Logical. Should it calculate MDC (TRUE) or return the original variables (FALSE)? Default is FALSE.
 #'
+#' @param yearsWithClimateProjections Numeric. The user can pass the years that have climate projection in the data. Default to 2011:2100.
+#'
 #' @return This function returns a list of all years, with each year being the local path for the raster stack that contains all variables
 #'
 #' @author Tati Micheletti
@@ -59,8 +61,14 @@ prepareClimateLayers <- function(pathInputs = NULL,
                                  studyArea = NULL,
                                  model = NULL, # 'birds', 'fireSense'. If you wanna provide other variables, don't use birds or fireSense here.
                                  doughtMonths = 4:9, # Months for fireSense to calculate MonthDoughtCode (MDC)
-                                 returnCalculatedLayersForFireSense = FALSE){ # If TRUE, it returns the calculated MDC layers already, not the original stack with Tmax and PPT
+                                 returnCalculatedLayersForFireSense = FALSE,
+                                 yearsWithClimateProjections = 2011:2100){ # If TRUE, it returns the calculated MDC layers already, not the original stack with Tmax and PPT
 
+  # Check if the year is in the climate projection range. If not, don't even bother, return a raster of NA's
+  if (!all(years %in% 2011:2100)) {
+    message(red(paste0("The year ", y, " does not have climate projections. Returning NULL")))
+    return(NULL)
+  }
     drive_auth(email = authEmail)
   # 1. Make sure it has all defaults
     if (!all(doughtMonths %in% 4:9)){
