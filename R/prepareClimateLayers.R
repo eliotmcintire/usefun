@@ -35,7 +35,7 @@
 #' @author Tati Micheletti
 #' @export
 #' @importFrom data.table data.table
-#' @importFrom raster stack raster crs
+#' @importFrom raster stack raster crs getValues setValues
 #' @importFrom reproducible postProcess Cache assessDataType preProcess basename2
 #' @importFrom crayon red green yellow
 #' @importFrom utils zip
@@ -58,13 +58,13 @@ prepareClimateLayers <- function(pathInputs = NULL,
                                  rasterToMatch = NULL,
                                  studyArea = NULL,
                                  model = NULL, # 'birds', 'fireSense'. If you wanna provide other variables, don't use birds or fireSense here.
-                                 doughtMonths = 4:9, # months for fireSense to calculate MonthDoughtCode (MDC)
+                                 doughtMonths = 4:9, # Months for fireSense to calculate MonthDoughtCode (MDC)
                                  returnCalculatedLayersForFireSense = FALSE){ # If TRUE, it returns the calculated MDC layers already, not the original stack with Tmax and PPT
 
     drive_auth(email = authEmail)
   # 1. Make sure it has all defaults
-    if (doughtMonths != 4:9){
-      stop("Drought calculation for months other than April to June is not yet supported") # TODO
+    if (!all(doughtMonths %in% 4:9)){
+      stop("Drought calculation for Months other than April to June is not yet supported") # TODO
     }
     if (is.null(model)){
     stop("Please provide the model for which you are creating the variables (i.e. 'birds', 'fireSense', 'NA')")
@@ -224,37 +224,39 @@ yearsList <- lapply(X = years, FUN = function(y){
       # For fireSense, do the calculations already'
       if (all(model == "fireSense", isTRUE(returnCalculatedLayersForFireSense))){
         # Day length adjustement L_f in Drought Code (taken from Van Wagner 1987)
-        L_f <- function(month){
+        L_f <- function(Month){
           c('4' = 0.9,
             '5' = 3.8,
             '6' = 5.8,
             '7' = 6.4,
             '8' = 5.0,
-            '9' = 2.4)[[as.character(month)]] # TODO [ FIX ] Update for all months, check latitude problem. Ideally, bring original table in here.
+            '9' = 2.4)[[as.character(Month)]] # TODO [ FIX ] Update for all Months, check latitude problem. Ideally, bring original table in here.
         }
 
-        nDays <- function(month){
+        nDays <- function(Month){
           c('4' = 30,
             '5' = 31,
             '6' = 30,
             '7' = 31,
             '8' = 31,
-            '9' = 30)[[as.character(month)]]
+            '9' = 30)[[as.character(Month)]]
         }
 
-        MDC06 <- Cache(calc, variablesStack, fun = function(x){
-          MDC_0 <- 0
-          for (month in doughtMonths){
-            PPT <- x[[paste0("PPT0", month)]]
-            Tmax <- x[[paste0("Tmax0", month)]]
-            MDC_m <- pmax(MDC_0 + .25 * nDays(month) * (.36 * Tmax + L_f(month)) -
-                            400 * log(1 + 3.937 * .83 * PPT / (800 * exp(-MDC_0/400))) +
-                            .25 * nDays(month) * (.36 * Tmax + L_f(month)),0)
-            MDC_0 <- pmax((MDC_0 + MDC_m) / 2, 0)
-          }
-          return(MDC_0)
-        })
-        variablesStack <- MDC06
+        # remove the variables from rasterStack for faster operations
+        dt <- na.omit(data.table(raster::getValues(variablesStack), pixelID = 1:ncell(variablesStack)))
+        dt[,MDC_0 := 0]
+        for (Month in doughtMonths){
+          dt[, MDC_m := pmax(MDC_0 + .25 * nDays(Month) * (.36 * eval(parse(text = paste0("Tmax0", Month))) + L_f(Month)) -
+                          400 * log(1 + 3.937 * .83 * eval(parse(text = paste0("PPT0", Month))) / (800 * exp(-MDC_0/400))) +
+                          .25 * nDays(Month) * (.36 * eval(parse(text = paste0("Tmax0", Month))) + L_f(Month)),0)]
+          dt[, MDC_0 := pmax((MDC_0 + MDC_m) / 2, 0)]
+        }
+        # Set new raster variable to raster
+        MDC <- merge(data.table(pixelID = 1:ncell(variablesStack)),
+                     dt[, c("pixelID", "MDC_0")], by = "pixelID", all.x = TRUE)
+        setkey(MDC, pixelID)
+        variablesStack <- raster::setValues(x = variablesStack[[1]], values = MDC$MDC_0)
+        names(variablesStack) <- paste("MDC", y)
         dType <- assessDataType(variablesStack)
       }
       writeRaster(variablesStack, filename = fileName, datatype = dType)
