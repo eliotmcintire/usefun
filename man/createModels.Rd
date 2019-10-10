@@ -13,7 +13,8 @@ prepareClimateLayers(pathInputs = NULL, variables = NULL,
   fileResolution = NULL, authEmail = NULL, RCP = NULL,
   climateModel = NULL, ensemble = NULL, rasterToMatch = NULL,
   studyArea = NULL, model = NULL, doughtMonths = 4:9,
-  returnCalculatedLayersForFireSense = FALSE)
+  returnCalculatedLayersForFireSense = FALSE,
+  yearsWithClimateProjections = 2011:2100)
 }
 \arguments{
 \item{caribouCoefTable}{data.table of the coefficient values for all models available. If not provided,
@@ -51,7 +52,9 @@ If you wanna provide the variables to be produced, don't use birds or fireSense 
 
 \item{doughtMonths}{numeric. Months for fireSense to calculate MonthDoughtCode (MDC) i.e. `4:9`.}
 
-\item{returnCalculatedLayersForFireSense}{Logical. Should it calculate MDC (TRUE) or return the original variables (FALSE)?}
+\item{returnCalculatedLayersForFireSense}{Logical. Should it calculate MDC (TRUE) or return the original variables (FALSE)? Default is FALSE.}
+
+\item{yearsWithClimateProjections}{Numeric. The user can pass the years that have climate projection in the data. Default to 2011:2100.}
 }
 \value{
 names list of the quote of the model that can be parsed to generate the simulated data bootstrapped
