@@ -200,7 +200,9 @@ yearsList <- lapply(X = years, FUN = function(y){
                                destinationPath = pathInputs) # Currently not really working. Giving error:
       # Error in grepl(archive, pattern = destinationPathUser) :
       #   object 'destinationPathUser' not found
-      message(green(paste0(fileName, " now exists locally. Returning the raster stack with the following variables: ", variables)))
+      message(green(paste0(fileName, " now exists locally. Returning the raster stack with the following variables: ")))
+      message(green(paste(variables, collapse = ", ")))
+
       return(stack(fileName))
     } else {
       # B1. If we don't have it in the cloud, (use the years in file name), make it from the original layer.
