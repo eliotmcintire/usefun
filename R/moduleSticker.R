@@ -54,10 +54,9 @@ moduleSticker <- function(moduleTable = NULL, moduleName,
   packageName <- ifelse(moduleName == "fireSense + SCFM",
                         "fireSense\n+ SCFM",
                         ifelse(moduleName == "caribouLambda",
-                               "caribouL",
+                               "caribou",
                                unique(moduleTable[, module])))
-
-  sticker(imageURL, package = packageName,
+  stick <- sticker(imageURL, package = packageName,
           h_color = moduleTable[parameter == "h_color", value],
           h_fill = moduleTable[parameter == "h_fill", value],
           p_color = "white",
@@ -74,5 +73,15 @@ moduleSticker <- function(moduleTable = NULL, moduleName,
           dpi = 600,
           lineheight = 0.13
           )
+
+  # if (moduleName == "caribouLambda"){ # Gave up! Not working...
+  #   lambdaStick <- stick + geom_pkgname("~lambda", x = 1.5, y = 1.55,
+  #                                       family = "sans", parse = TRUE,
+  #                                       size = 40)
+  #   # hexSticker::sticker_dev()
+  #   png(filename = savedSticker, res = 300)
+  #   print(lambdaStick)
+  #   dev.off()
+  # }
   return(message("Your sticker has been saved: ", savedSticker))
 }
