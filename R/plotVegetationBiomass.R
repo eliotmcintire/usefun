@@ -16,21 +16,21 @@
 #' @importFrom LandR sppColors vegTypeMapGenerator
 #' @importFrom quickPlot clearPlot
 #' @importFrom raster writeRaster
-#' 
+#'
 #' @include bringObjectTS.R
 #'
 #' @rdname plotLeadingVegetationType
 
-plotVegetationBiomass <- function(years = c(2001, 2100), 
-                                  dataPath, 
-                                  typeSim, 
+plotVegetationBiomass <- function(years = c(2001, 2100),
+                                  dataPath,
+                                  typeSim,
                                   colNA = "grey85", saveRAS = TRUE){
-  
+
   folderPath <- dataPath
-  
+
   cohorDataList <- bringObjectTS(path = folderPath, rastersNamePattern = "cohortData")
   pixelGroupList <- bringObjectTS(path = folderPath, rastersNamePattern = "pixelGroupMap")
-  
+
   # BIOMASS ~~~~~~~~~~~~~~~~
   maxBiomassPlot <- lapply(X = c(1:length(cohorDataList)), function(index){
     cohort <- cohorDataList[[index]]
@@ -42,7 +42,9 @@ plotVegetationBiomass <- function(years = c(2001, 2100),
   names(maxBiomassPlot) <- paste0("biomassYear", years)
   if (saveRAS){
     lapply(1:length(maxBiomassPlot), function(index){
-      writeRaster(x = maxBiomassPlot[[index]], filename = paste0(folderPath, "RAS", names(maxBiomassPlot)[index]), format = "GTiff")
+      writeRaster(x = maxBiomassPlot[[index]], filename = file.path(folderPath, paste0("RAS_", typeSim,"_",
+                                                                                       names(maxBiomassPlot)[index]),
+                                                                    format = "GTiff"), overwrite = TRUE)
     })
   }
   rng = range(c(getValues(maxBiomassPlot[[1]]), getValues(maxBiomassPlot[[2]])), na.rm = TRUE)
@@ -59,9 +61,9 @@ plotVegetationBiomass <- function(years = c(2001, 2100),
       par(mfrow=c(length(years)/2,length(years)))
     }
   }
-  plot(maxBiomassPlot[[1]], breaks = brks, col = cols, lab.breaks = brks, 
+  plot(maxBiomassPlot[[1]], breaks = brks, col = cols, lab.breaks = brks,
        main = paste0('Max biomass ', names(maxBiomassPlot)[[1]], " - ", typeSim), colNA = colNA)
-  plot(maxBiomassPlot[[2]], breaks = brks, col = cols, lab.breaks = brks, 
+  plot(maxBiomassPlot[[2]], breaks = brks, col = cols, lab.breaks = brks,
        main = paste0('Max biomass ', names(maxBiomassPlot)[[2]], " - ", typeSim), colNA = colNA)
   p <- recordPlot()
   return(p)

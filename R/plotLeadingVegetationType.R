@@ -63,7 +63,7 @@ plotLeadingVegetationType <- function(years = c(2011, 2100),
   names(leadingSpecies) <- paste0("LeadingType", names(cohorDataList))
   if (saveRAS){
     lapply(1:length(leadingSpecies), function(index){
-      writeRaster(x = leadingSpecies[[index]], filename = paste0(folderPath, "RAS", names(leadingSpecies)[index]),
+      writeRaster(x = leadingSpecies[[index]], filename = file.path(folderPath, paste0("RAS_", typeSim,"_", names(leadingSpecies)[index])),
                   format = "GTiff", overwrite = TRUE)
     })
   }
