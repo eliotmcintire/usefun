@@ -20,8 +20,14 @@ Imports: LandR,
          remotes,
          hexSticker,
          showtext,
-         sysfonts
+         sysfonts,
+         animation,
+         ggplot2,
+         googledrive,
+         quickPlot
 Collate: 
+    'biomassPerSpeciesYearGIF.R'
+    'biomassYearGIF.R'
     'grepMulti.R'
     'bringObjectTS.R'
     'burnFromAge.R'
@@ -39,14 +45,19 @@ Collate:
     'createStaticLayersRSF.R'
     'defineStudyArea.R'
     'extractDisturbanceFast.R'
+    'substrBoth.R'
+    'forestAgePlot.R'
     'getLayers.R'
     'makeReclassifyMatrix.R'
     'moduleSticker.R'
     'modulesAvailable.R'
+    'plotBurnSummary.R'
+    'plotLeadingVegetationType.R'
+    'plotVegetationBiomass.R'
     'prepInputStack.R'
     'prepInputsLayers_DUCKS.R'
     'prepareClimateLayers.R'
     'provinceBCRStudyArea.R'
     'setTempFolder.R'
     'subsetNonNARas.R'
-    'substrBoth.R'
+    'totalBiomassPerSpecies.R'
