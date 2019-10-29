@@ -26,7 +26,7 @@ forestAgePlot <- function(dataPath, typeSim,
                           addCaribousuitability = FALSE,
                           overwrite = FALSE){
 
-  fileName <- paste0("forestAgePlot", typeSim, ".png")
+  fileName <- file.path(dataPath, paste0("forestAgePlot", typeSim, ".png"))
   if (all(file.exists(fileName), !isTRUE(overwrite))){
     message("Plot exist and overwrite is FALSE. Returning plot path")
     return(fileName)
