@@ -6,6 +6,8 @@
 #' @param proportional logical. Should the plot be of the proportional biomass?
 #' @param overstory logical. Should the plot be of the overstory biomass?
 #' @param overwrite logical.
+#' @param maxVal numeric. Max value for y axis. Passing this ensures that both overstory
+#'               and all biomass plots are comparable Default to 1e10.
 #'
 #' @return plot
 #'
@@ -28,7 +30,9 @@ totalBiomassPerSpecies <- function(dataPath,
                                    typeSim,
                                    proportional = FALSE,
                                    columnsType = FALSE,
-                                   overstory = FALSE, overwrite = FALSE){
+                                   overstory = FALSE,
+                                   overwrite = FALSE,
+                                   maxVal = 1e10){
 
   folderPath <- dataPath
 
@@ -115,7 +119,8 @@ totalBiomassPerSpecies <- function(dataPath,
       theme(legend.text = element_text(size = 20), legend.title = element_blank(),
             text = element_text(size=20),
             axis.text.x = element_text(size = 20),
-            title = element_text(size = 22))
+            title = element_text(size = 22)) +
+      ylim(0, maxVal)
     quickPlot::clearPlot()
     print(plot2)
     dev.off()
@@ -129,7 +134,8 @@ totalBiomassPerSpecies <- function(dataPath,
                                               "across pixels - ", typeSim)) +
       theme(legend.text = element_text(size = 16), legend.title = element_blank(),
             text = element_text(size=16),
-            axis.text.x = element_text(size = 16))
+            axis.text.x = element_text(size = 16)) +
+      ylim(0, maxVal)
     quickPlot::clearPlot()
     quickPlot::Plot(plot2, new = TRUE)
     dev.off()

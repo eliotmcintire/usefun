@@ -5,7 +5,8 @@
 \title{Plots biomass per species: proportional or absolute, and total or just overstory}
 \usage{
 totalBiomassPerSpecies(dataPath, typeSim, proportional = FALSE,
-  columnsType = FALSE, overstory = FALSE, overwrite = FALSE)
+  columnsType = FALSE, overstory = FALSE, overwrite = FALSE,
+  maxVal = 1e+10)
 }
 \arguments{
 \item{dataPath}{character. Path to data}
@@ -19,6 +20,9 @@ totalBiomassPerSpecies(dataPath, typeSim, proportional = FALSE,
 \item{overstory}{logical. Should the plot be of the overstory biomass?}
 
 \item{overwrite}{logical.}
+
+\item{maxVal}{numeric. Max value for y axis. Passing this ensures that both overstory
+and all biomass plots are comparable Default to 1e10.}
 }
 \value{
 plot
