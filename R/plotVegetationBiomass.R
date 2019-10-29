@@ -30,8 +30,8 @@ plotVegetationBiomass <- function(years = c(2011, 2100),
                                   overwrite = FALSE){
   if (!isTRUE(overwrite)){
     fileName <- usefun::grepMulti(x = list.files(dataPath, full.names = TRUE), patterns = c("RAS_biomassYear", ".tif")) #[ FIX ] It won't make the "missing" leading years...
-    fileName <- fileName[!fileName %in% usefun::grepMulti(x = fileName, patterns = c("aux"))]
-    if (!is.null(fileName)){
+    if (length(fileName) != 0){
+      fileName <- fileName[!fileName %in% usefun::grepMulti(x = fileName, patterns = c("aux"))]
       message("Rasters exist and overwrite is FALSE. Returning")
       stk <- raster::stack(lapply(X = fileName, FUN = raster::raster))
       return(stk)

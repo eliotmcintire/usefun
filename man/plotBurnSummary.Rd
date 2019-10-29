@@ -4,12 +4,15 @@
 \alias{plotBurnSummary}
 \title{Plots summary of burns}
 \usage{
-plotBurnSummary(folderData, typeSim, lastYear, theObject = NULL)
+plotBurnSummary(dataPath, typeSim, lastYear, theObject = NULL,
+  overwrite = FALSE)
 }
 \arguments{
-\item{folderData}{character. Path to data}
+\item{dataPath}{character. Path to data}
 
 \item{typeSim}{character. Which simulation is it? i.e. 'LandR_SCFM' | 'LandR.CS_fS'}
+
+\item{overwrite}{logical. Default FALSE}
 
 \item{years}{numeric. Years available/intended to be used for the giphy}
 

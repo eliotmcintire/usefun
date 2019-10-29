@@ -1,9 +1,10 @@
 #' Plots summary of burns
 #'
 #' @param years numeric. Years available/intended to be used for the giphy
-#' @param folderData character. Path to data
+#' @param dataPath character. Path to data
 #' @param typeSim character. Which simulation is it? i.e. 'LandR_SCFM' | 'LandR.CS_fS'
 #' @param saveRAS logical. Save the raster for posterior use?
+#' @param overwrite logical. Default FALSE
 #'
 #' @return plot
 #'
@@ -21,10 +22,18 @@
 #'
 #' @rdname plotBurnSummary
 
-plotBurnSummary <- function(folderData,
+plotBurnSummary <- function(dataPath,
                             typeSim,
                             lastYear,
-                            theObject = NULL){
+                            theObject = NULL,
+                            overwrite = FALSE){
+
+  fileName <- file.path(dataPath, paste0("burnSummary", typeSim, ".png"))
+  if (all(file.exists(fileName), !isTRUE(overwrite))){
+    message("Plot exist and overwrite is FALSE. Returning plot path")
+    return(fileName)
+  }
+
 
 parSetup <- par()
 invisible(on.exit(par(parSetup)))
@@ -34,36 +43,40 @@ par(mfrow=c(2, 1))
 if (!is.null(theObject)){
   burnSumm <- theObject
 } else {
-  burnSumm <- readRDS(file.path(folderData, paste0("burnSummary_year", lastYear,".rds")))
+  burnSumm <- readRDS(file.path(dataPath, paste0("burnSummary_year", lastYear,".rds")))
 }
+
 areaB <- burnSumm[, sumAB := sum(areaBurned), by = year]
-areaB <- data.table(YEAR = areaB$year, AREABURNED = areaB$sumAB)
+areaB <- data.table(year = areaB$year, val = areaB$sumAB, var = "area_burned")
 areaB <- unique(areaB)
-tend <-lm(AREABURNED ~ YEAR, data = areaB)
+
+tend <-lm(val ~ year, data = areaB)
 require(stats)
 coeff <- coefficients(tend)
 
-# equation of the line :
-eq <- paste0("y = ", round(coeff[2],1), "*x ", round(coeff[1],1))
-# plot
-plot(areaB, main = paste0(eq, " - ", typeSim))
-abline(tend, col="blue")
-
 # N fires
 nFires <- burnSumm[, Nfires := length(N), by = year]
-nFires <- data.table(YEAR = nFires$year, NUMBFIRES = nFires$Nfires)
+nFires <- data.table(year = nFires$year, val = nFires$Nfires, var = "number_fires")
 nFires <- unique(nFires)
-tendF <-lm(NUMBFIRES ~ YEAR, data = nFires)
+tendF <-lm(val ~ year, data = nFires)
 require(stats)
 coeffF <- coefficients(tendF)
 
-# equation of the line :
-eqF <- paste0("y = ", round(coeffF[2],1), "*x ", round(coeffF[1],1))
-# plot
-plot(nFires, main = paste0(eqF, " - ", typeSim))
-abline(tendF, col="red")
+# New facet label names for dose variable
+replacementNames <- c(paste0("Area burned: ", paste0("y = ", round(coeff[2],1), "*x ", round(coeff[1],1))),
+                      paste0("No fires: ", paste0("y = ", round(coeffF[2],1), "*x ", round(coeffF[1],1))))
+names(replacementNames) <- c("area_burned", "number_fires")
 
-p <- recordPlot()
+dt <- rbind(areaB, nFires)
+library("ggplot2")
+p <- ggplot(data = dt, aes(x = year, y = val, )) +
+     geom_point() +
+     stat_smooth(method = "lm", aes(fill = var, color = var)) +
+  facet_grid(var ~ ., scales = "free_y", labeller = labeller(var = replacementNames)) +
+  theme(axis.title.y.left = element_blank(),
+        legend.position = "none",
+        strip.text.y = element_text(size = 12, face = "bold"))
+ggsave(fileName, plot = p)
 
-return(p)
+return(fileName)
 }
