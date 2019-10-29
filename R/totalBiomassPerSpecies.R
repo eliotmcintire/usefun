@@ -32,12 +32,26 @@ totalBiomassPerSpecies <- function(dataPath,
                                    columnsType = FALSE,
                                    overstory = FALSE,
                                    overwrite = FALSE,
-                                   maxVal = 1e10){
+                                   maxVal = 2e10){
+  prop <- NULL
+  overS <- NULL
+  if (isTRUE(proportional)) prop <- "_Prop"
+  if (isTRUE(overstory)) overS <- "_Overstory"
 
-  folderPath <- dataPath
+  if (!isTRUE(overwrite)){
+  pat <- c("biomassMapStack_", typeSim, prop, overS)
+    fileName <- usefun::grepMulti(x = list.files(dataPath, full.names = TRUE), patterns = pat) #[ FIX ] It won't make the "missing" leading years...
+    if (!is.null(fileName)){
+      message("Plots exist and overwrite is FALSE. Returning paths")
+      return(fileName)
+    }
+  }
 
-  cohortDataList <- bringObjectTS(path = folderPath, rastersNamePattern = "cohortData")
-  pixelGroupList <- bringObjectTS(path = folderPath, rastersNamePattern = "pixelGroupMap")
+  if (proportional)
+    maxVal <- 100
+
+  cohortDataList <- bringObjectTS(path = dataPath, rastersNamePattern = "cohortData")
+  pixelGroupList <- bringObjectTS(path = dataPath, rastersNamePattern = "pixelGroupMap")
 
   sppEquivCol <- "NWT"
   data("sppEquivalencies_CA", package = "LandR")
@@ -86,26 +100,22 @@ totalBiomassPerSpecies <- function(dataPath,
     return(thisPeriod)
   })
 )
-  prop <- NULL
-  overS <- NULL
+
   if (isTRUE(proportional)){
-    prop <- "prop"
     if (isTRUE(overstory)){
-      overS <- "overSt"
       y <- biomassBySpecies$overstoryBiomassProp # Propor = TRUE, Overst = TRUE
     } else {
       y <- biomassBySpecies$propBiomassBySpecies  # Propor = TRUE, Overst = FALSE
     }
   } else {
     if (isTRUE(overstory)){
-      overS <- "overSt"
       y <- biomassBySpecies$overstoryBiomass # Propor = FALSE, Overst = TRUE
     } else {
       y <- biomassBySpecies$BiomassBySpecies  # Propor = FALSE, Overst = FALSE
     }
   }
 
-  png(filename = file.path(folderPath, paste0("biomassMapStack_", typeSim, prop, overS, ".png")), height = 600, width = 900)
+  png(filename = file.path(dataPath, paste0("biomassMapStack_", typeSim, prop, overS, ".png")), height = 600, width = 900)
   library("ggplot2")
 
   if (columnsType){
@@ -114,7 +124,7 @@ totalBiomassPerSpecies <- function(dataPath,
       geom_col(aes(y = y)) +
       scale_fill_viridis_d() +
       labs(x = "Year", y = "Total Biomass", title = paste0("Total biomass by species\n",
-                                                     "across pixels - ", typeSim)) +
+                                                     "across pixels - ", typeSim, " ", overS)) +
       theme_bw() +
       theme(legend.text = element_text(size = 20), legend.title = element_blank(),
             text = element_text(size=20),
@@ -131,7 +141,7 @@ totalBiomassPerSpecies <- function(dataPath,
       geom_area(position = "stack") +
       scale_fill_manual(values = sppColorVect) +
       labs(x = "Year", y = "Total Biomass", title = paste0("Total biomass by species\n",
-                                              "across pixels - ", typeSim)) +
+                                              "across pixels - ", typeSim, " ", overS)) +
       theme(legend.text = element_text(size = 16), legend.title = element_blank(),
             text = element_text(size=16),
             axis.text.x = element_text(size = 16)) +
