@@ -1,9 +1,10 @@
-#' Plots Leading Vegetation Type using cohortData and pixelGroupMap
+#' Plots vegetation biomass Type using cohortData and pixelGroupMap
 #'
 #' @param years numeric. Years available/intended to be used for the giphy
 #' @param dataPath character. Path to data
 #' @param typeSim character. Which simulation is it? i.e. 'LandR_SCFM' | 'LandR.CS_fS'
 #' @param saveRAS logical. Save the raster for posterior use?
+#' @param overwrite logical.
 #'
 #' @return plot
 #'
@@ -19,20 +20,37 @@
 #'
 #' @include bringObjectTS.R
 #'
-#' @rdname plotLeadingVegetationType
+#' @rdname plotVegetationBiomass
 
-plotVegetationBiomass <- function(years = c(2001, 2100),
+plotVegetationBiomass <- function(years = c(2011, 2100),
                                   dataPath,
                                   typeSim,
-                                  colNA = "grey85", saveRAS = TRUE){
-
-  folderPath <- dataPath
-
-  cohorDataList <- bringObjectTS(path = folderPath, rastersNamePattern = "cohortData")
-  pixelGroupList <- bringObjectTS(path = folderPath, rastersNamePattern = "pixelGroupMap")
+                                  colNA = "grey85",
+                                  saveRAS = TRUE,
+                                  overwrite = FALSE){
+  if (!isTRUE(overwrite)){
+    fileName <- usefun::grepMulti(x = list.files(dataPath, full.names = TRUE), patterns = c("RAS_biomassYear", ".tif")) #[ FIX ] It won't make the "missing" leading years...
+    fileName <- fileName[!fileName %in% usefun::grepMulti(x = fileName, patterns = c("aux"))]
+    if (!is.null(fileName)){
+      message("Rasters exist and overwrite is FALSE. Returning")
+      stk <- raster::stack(lapply(X = fileName, FUN = raster::raster))
+      return(stk)
+    }
+  }
+  cohorDataList <- lapply(years, FUN = function(y){
+  tbl <- bringObjectTS(path = dataPath, rastersNamePattern = c("cohortData", y))
+    return(tbl[[1]])
+    })
+  names(cohorDataList) <- paste0("Year", years)
+  pixelGroupList <- lapply(years, FUN = function(y){
+    tbl <- bringObjectTS(path = dataPath, rastersNamePattern = c("pixelGroupMap", y))
+    return(tbl[[1]])
+  })
+  names(pixelGroupList) <- paste0("Year", years)
 
   # BIOMASS ~~~~~~~~~~~~~~~~
-  maxBiomassPlot <- lapply(X = c(1:length(cohorDataList)), function(index){
+
+    maxBiomassPlot <- lapply(X = c(1:length(cohorDataList)), function(index){
     cohort <- cohorDataList[[index]]
     pixelGroup <- pixelGroupList[[index]]
     a <- cohort[, list(sumBio = sum(B, na.rm = TRUE)), by = "pixelGroup"]
@@ -42,9 +60,9 @@ plotVegetationBiomass <- function(years = c(2001, 2100),
   names(maxBiomassPlot) <- paste0("biomassYear", years)
   if (saveRAS){
     lapply(1:length(maxBiomassPlot), function(index){
-      writeRaster(x = maxBiomassPlot[[index]], filename = file.path(folderPath, paste0("RAS_",
-                                                                                       names(maxBiomassPlot)[index], ".tif"),
-                                                                    format = "GTiff"), overwrite = TRUE)
+      writeRaster(x = maxBiomassPlot[[index]], filename = file.path(dataPath, paste0("RAS_",
+                                                                                       names(maxBiomassPlot)[index], ".tif")),
+                                                                    format = "GTiff", overwrite = TRUE)
     })
   }
   rng = range(c(getValues(maxBiomassPlot[[1]]), getValues(maxBiomassPlot[[2]])), na.rm = TRUE)

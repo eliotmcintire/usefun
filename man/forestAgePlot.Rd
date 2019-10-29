@@ -4,7 +4,8 @@
 \alias{forestAgePlot}
 \title{Plots of forest age}
 \usage{
-forestAgePlot(dataPath, typeSim, addCaribousuitability)
+forestAgePlot(dataPath, typeSim, addCaribousuitability = FALSE,
+  overwrite = FALSE)
 }
 \arguments{
 \item{dataPath}{character. Path to data}
@@ -12,6 +13,8 @@ forestAgePlot(dataPath, typeSim, addCaribousuitability)
 \item{typeSim}{character. Which simulation is it? i.e. 'LandR_SCFM' | 'LandR.CS_fS'}
 
 \item{addCaribousuitability}{logical. Should the plot show which forest ages are better or worse for Caribou in a color coded way?}
+
+\item{overwrite}{logical.}
 }
 \value{
 plot

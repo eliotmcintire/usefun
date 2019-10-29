@@ -1,10 +1,11 @@
-#' Plots biomass per species: proportional or absolute, and total or just overstory 
+#' Plots biomass per species: proportional or absolute, and total or just overstory
 #'
 #' @param dataPath character. Path to data
 #' @param typeSim character. Which typeSimation is it? i.e. 'LandR_SCFM' | 'LandR.CS_fS'
 #' @param columnsType logical. Should the plot be continuous (lines) or columns?
 #' @param proportional logical. Should the plot be of the proportional biomass?
 #' @param overstory logical. Should the plot be of the overstory biomass?
+#' @param overwrite logical.
 #'
 #' @return plot
 #'
@@ -18,33 +19,32 @@
 #' @importFrom quickPlot clearPlot
 #' @importFrom raster writeRaster
 #' @importFrom SpaDES.tools rasterizeReduced
-#' @importFrom reproducible Cache
 #'
 #' @include bringObjectTS.R
 #'
 #' @rdname totalBiomassPerSpecies
 
-totalBiomassPerSpecies <- function(dataPath, 
-                                   typeSim, 
+totalBiomassPerSpecies <- function(dataPath,
+                                   typeSim,
                                    proportional = FALSE,
-                                   columnsType = FALSE, 
-                                   overstory = FALSE){
-  
+                                   columnsType = FALSE,
+                                   overstory = FALSE, overwrite = FALSE){
+
   folderPath <- dataPath
-  
+
   cohortDataList <- bringObjectTS(path = folderPath, rastersNamePattern = "cohortData")
   pixelGroupList <- bringObjectTS(path = folderPath, rastersNamePattern = "pixelGroupMap")
-  
+
   sppEquivCol <- "NWT"
   data("sppEquivalencies_CA", package = "LandR")
-  sppEquivalencies_CA[, NWT := c(Abie_Bal = "Abie_Bal", 
-                                 Betu_Pap = "Betu_Pap", 
-                                 Lari_Lar = "Lari_Lar", 
+  sppEquivalencies_CA[, NWT := c(Abie_Bal = "Abie_Bal",
+                                 Betu_Pap = "Betu_Pap",
+                                 Lari_Lar = "Lari_Lar",
                                  Pice_Gla = "Pice_Gla",
-                                 Pice_Mar = "Pice_Mar", 
+                                 Pice_Mar = "Pice_Mar",
                                  Pinu_Ban = "Pinu_Ban",
                                  Popu_Tre = "Popu_Tre")[Boreal]]
-  
+
   sppEquivalencies_CA <- sppEquivalencies_CA[!is.na(NWT)]
   sppEquivalencies_CA$EN_generic_short <- sppEquivalencies_CA$NWT
   sppColorVect <- LandR::sppColors(sppEquiv = sppEquivalencies_CA, sppEquivCol = sppEquivCol,
@@ -59,12 +59,12 @@ totalBiomassPerSpecies <- function(dataPath,
       cohort <- cohort[!duplicated(cohort)]
     pixelCohortData <- LandR::addNoPixel2CohortData(cohort, pixelGroup)
     pixelCohortData[, B := as.double(B)]
-    thisPeriod <- pixelCohortData[, list(year = as.numeric(substrBoth(strng = yr, 
-                                                                      howManyCharacters = 4, 
+    thisPeriod <- pixelCohortData[, list(year = as.numeric(substrBoth(strng = yr,
+                                                                      howManyCharacters = 4,
                                                                       fromEnd = TRUE)),
                                          BiomassBySpecies = sum(B*noPixels, na.rm = TRUE)),
                                   by = .(speciesCode)]
-    
+
     # For proportional
     if (all(!isTRUE(overstory), isTRUE(proportional))) {
       # stop("This still need to be debug. Not working") # [ FIX ]
@@ -76,24 +76,36 @@ totalBiomassPerSpecies <- function(dataPath,
       thisPeriod <- thisPeriod[overstory, on = 'speciesCode']
       if (isTRUE(proportional)) {
         # stop("This still need to be debug. Not working") # [ FIX ]
-        thisPeriod$propBiomassBySpecies <- 100 * (thisPeriod$BiomassBySpecies / sum(thisPeriod$BiomassBySpecies)) # NOT SURE THIS WORKS... Double check the code here! It might be bogus
+        thisPeriod$overstoryBiomassProp <- 100 * (thisPeriod$overstoryBiomass / sum(thisPeriod$overstoryBiomass))
       }
     }
     return(thisPeriod)
   })
 )
   prop <- NULL
+  overS <- NULL
   if (isTRUE(proportional)){
     prop <- "prop"
-    y <- biomassBySpecies$propBiomassBySpecies
+    if (isTRUE(overstory)){
+      overS <- "overSt"
+      y <- biomassBySpecies$overstoryBiomassProp # Propor = TRUE, Overst = TRUE
+    } else {
+      y <- biomassBySpecies$propBiomassBySpecies  # Propor = TRUE, Overst = FALSE
+    }
   } else {
-    y <- biomassBySpecies$BiomassBySpecies
+    if (isTRUE(overstory)){
+      overS <- "overSt"
+      y <- biomassBySpecies$overstoryBiomass # Propor = FALSE, Overst = TRUE
+    } else {
+      y <- biomassBySpecies$BiomassBySpecies  # Propor = FALSE, Overst = FALSE
+    }
   }
 
-  png(filename = file.path(folderPath, paste0("biomassMapStack_", typeSim, prop, ".png")), height = 600, width = 900)
+  png(filename = file.path(folderPath, paste0("biomassMapStack_", typeSim, prop, overS, ".png")), height = 600, width = 900)
   library("ggplot2")
+
   if (columnsType){
-    plot2 <- ggplot(data = biomassBySpecies, aes(x = year, y = y, 
+    plot2 <- ggplot(data = biomassBySpecies, aes(x = year, y = y,
                                                  fill = speciesCode), position = "fill") +
       geom_col(aes(y = y)) +
       scale_fill_viridis_d() +
@@ -107,7 +119,7 @@ totalBiomassPerSpecies <- function(dataPath,
     quickPlot::clearPlot()
     print(plot2)
     dev.off()
-    
+
   } else {
     plot2 <- ggplot(data = biomassBySpecies, aes(x = year, y = y,
                                                  fill = speciesCode, group = speciesCode)) +
@@ -122,6 +134,6 @@ totalBiomassPerSpecies <- function(dataPath,
     quickPlot::Plot(plot2, new = TRUE)
     dev.off()
   }
-  
+
 return(plot2)
 }

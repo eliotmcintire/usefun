@@ -1,9 +1,9 @@
 #' Plots Leading Vegetation Type using cohortData and pixelGroupMap
 #'
-#' @param years numeric. Years available/intended to be used for the giphy
 #' @param dataPath character. Path to data
 #' @param typeSim character. Which simulation is it? i.e. 'LandR_SCFM' | 'LandR.CS_fS'
 #' @param saveRAS logical. Save the raster for posterior use?
+#' @param overwrite logical.
 #'
 #' @return plot
 #'
@@ -15,21 +15,31 @@
 #' @importFrom googledrive drive_upload
 #' @importFrom LandR sppColors vegTypeMapGenerator
 #' @importFrom quickPlot clearPlot
-#' @importFrom raster writeRaster
+#' @importFrom raster writeRaster stack raster
 #'
 #' @include bringObjectTS.R
+#' @include grepMulti.R
 #'
 #' @rdname plotLeadingVegetationType
 
-plotLeadingVegetationType <- function(years = c(2011, 2100),
-                                      dataPath,
+plotLeadingVegetationType <- function(dataPath,
                                       typeSim,
                                       colNA = "grey85",
-                                      saveRAS = TRUE){
-  folderPath <- dataPath
+                                      saveRAS = TRUE,
+                                      overwrite = FALSE){
 
-  cohorDataList <- bringObjectTS(path = folderPath, rastersNamePattern = "cohortData")
-  pixelGroupList <- bringObjectTS(path = folderPath, rastersNamePattern = "pixelGroupMap")
+if (!isTRUE(overwrite)){
+  fileName <- usefun::grepMulti(x = list.files(dataPath, full.names = TRUE), patterns = c("RAS_LeadingTypeYear", ".tif")) #[ FIX ] It won't make the "missing" leading years...
+  fileName <- fileName[!fileName %in% usefun::grepMulti(x = fileName, patterns = c("aux"))]
+   if (!is.null(fileName)){
+     message("Rasters exist and overwrite is FALSE. Returning")
+     stk <- raster::stack(lapply(X = fileName, FUN = raster::raster))
+     return(stk)
+   }
+}
+
+  cohorDataList <- bringObjectTS(path = dataPath, rastersNamePattern = "cohortData")
+  pixelGroupList <- bringObjectTS(path = dataPath, rastersNamePattern = "pixelGroupMap")
 
   sppEquivCol <- "NWT"
   data("sppEquivalencies_CA", package = "LandR")
@@ -63,7 +73,8 @@ plotLeadingVegetationType <- function(years = c(2011, 2100),
   names(leadingSpecies) <- paste0("LeadingType", names(cohorDataList))
   if (saveRAS){
     lapply(1:length(leadingSpecies), function(index){
-      writeRaster(x = leadingSpecies[[index]], filename = file.path(folderPath, paste0("RAS_", names(leadingSpecies)[index])),
+      fileName <- file.path(dataPath, paste0("RAS_", names(leadingSpecies)[index], ".tif"))
+      writeRaster(x = leadingSpecies[[index]], filename = fileName,
                   format = "GTiff", overwrite = TRUE)
     })
   }

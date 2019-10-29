@@ -3,6 +3,7 @@
 #' @param dataPath character. Path to data
 #' @param typeSim character. Which simulation is it? i.e. 'LandR_SCFM' | 'LandR.CS_fS'
 #' @param addCaribousuitability logical. Should the plot show which forest ages are better or worse for Caribou in a color coded way?
+#' @param overwrite logical.
 #'
 #' @return plot
 #'
@@ -16,19 +17,24 @@
 #' @importFrom quickPlot clearPlot
 #' @importFrom raster writeRaster
 #' @importFrom SpaDES.tools rasterizeReduced
-#' @importFrom reproducible Cache
 #'
 #' @include substrBoth.R
 #'
 #' @rdname forestAgePlot
 
-forestAgePlot <- function(dataPath, typeSim, addCaribousuitability){
-  
-  folderPath <- dataPath
-  
-  cohorDataList <- Cache(bringObjectTS, path = folderPath, rastersNamePattern = "cohortData")
-  pixelGroupList <- Cache(bringObjectTS, path = folderPath, rastersNamePattern = "pixelGroupMap")
-  
+forestAgePlot <- function(dataPath, typeSim,
+                          addCaribousuitability = FALSE,
+                          overwrite = FALSE){
+
+  fileName <- paste0("forestAgePlot", typeSim, ".png")
+  if (all(file.exists(fileName), !isTRUE(overwrite))){
+    message("Plot exist and overwrite is FALSE. Returning plot path")
+    return(fileName)
+  }
+
+  cohorDataList <- bringObjectTS(path = dataPath, rastersNamePattern = "cohortData")
+  pixelGroupList <- bringObjectTS(path = dataPath, rastersNamePattern = "pixelGroupMap")
+
   # MAX AGE
   maxAge <- data.table::rbindlist(lapply(X = names(cohorDataList), function(index){
     cohort <- cohorDataList[[index]]
@@ -39,8 +45,8 @@ forestAgePlot <- function(dataPath, typeSim, addCaribousuitability){
                 minAge = min(r[], na.rm = TRUE),
                 maxAge = max(r[], na.rm = TRUE),
                 medianAge = median(r[], na.rm = TRUE),
-                years = as.numeric(substrBoth(strng = index, 
-                                                      howManyCharacters = 4, 
+                years = as.numeric(substrBoth(strng = index,
+                                                      howManyCharacters = 4,
                                                       fromEnd = TRUE))))
   }))
   oldBurn <- ifelse(addCaribousuitability, "red", "white")
@@ -54,5 +60,6 @@ forestAgePlot <- function(dataPath, typeSim, addCaribousuitability){
     geom_line(aes(y = medianAge), size = 1.2, linetype = "dashed") +
     ggtitle(paste0("Forest Age - ", typeSim)) +
     theme(legend.position = "bottom")
+  ggsave(fileName, plot = agePlot)
 return(agePlot)
 }

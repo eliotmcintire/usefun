@@ -5,7 +5,7 @@
 \title{Plots biomass per species: proportional or absolute, and total or just overstory}
 \usage{
 totalBiomassPerSpecies(dataPath, typeSim, proportional = FALSE,
-  columnsType = FALSE, overstory = FALSE)
+  columnsType = FALSE, overstory = FALSE, overwrite = FALSE)
 }
 \arguments{
 \item{dataPath}{character. Path to data}
@@ -17,6 +17,8 @@ totalBiomassPerSpecies(dataPath, typeSim, proportional = FALSE,
 \item{columnsType}{logical. Should the plot be continuous (lines) or columns?}
 
 \item{overstory}{logical. Should the plot be of the overstory biomass?}
+
+\item{overwrite}{logical.}
 }
 \value{
 plot

@@ -30,13 +30,11 @@ parSetup <- par()
 invisible(on.exit(par(parSetup)))
 par(mfrow=c(2, 1))
 
-folderPath <- folderData
-
 # FIRE
 if (!is.null(theObject)){
   burnSumm <- theObject
 } else {
-  burnSumm <- readRDS(file.path(folderPath, paste0("burnSummary_year", lastYear,".rds")))
+  burnSumm <- readRDS(file.path(folderData, paste0("burnSummary_year", lastYear,".rds")))
 }
 areaB <- burnSumm[, sumAB := sum(areaBurned), by = year]
 areaB <- data.table(YEAR = areaB$year, AREABURNED = areaB$sumAB)
