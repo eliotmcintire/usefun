@@ -42,8 +42,8 @@ plotVegetationBiomass <- function(years = c(2001, 2100),
   names(maxBiomassPlot) <- paste0("biomassYear", years)
   if (saveRAS){
     lapply(1:length(maxBiomassPlot), function(index){
-      writeRaster(x = maxBiomassPlot[[index]], filename = file.path(folderPath, paste0("RAS_", typeSim,"_",
-                                                                                       names(maxBiomassPlot)[index]),
+      writeRaster(x = maxBiomassPlot[[index]], filename = file.path(folderPath, paste0("RAS_",
+                                                                                       names(maxBiomassPlot)[index], ".tif"),
                                                                     format = "GTiff"), overwrite = TRUE)
     })
   }
