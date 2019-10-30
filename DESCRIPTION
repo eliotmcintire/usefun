@@ -24,15 +24,21 @@ Imports: LandR,
          animation,
          ggplot2,
          googledrive,
-         quickPlot
+         quickPlot,
+         effsize,
+         gridExtra,
+         pryr
 Collate: 
     'biomassPerSpeciesYearGIF.R'
     'biomassYearGIF.R'
+    'cbindFromList.R'
+    'substrBoth.R'
     'grepMulti.R'
+    'helpersBirds.R'
+    'bootstrapPercentChanges.R'
     'bringObjectTS.R'
     'burnFromAge.R'
     'calculatePixelsInaRule.R'
-    'cbindFromList.R'
     'changeTraits.R'
     'checkPackagesVersions.R'
     'classifyWetlands.R'
@@ -45,7 +51,6 @@ Collate:
     'createStaticLayersRSF.R'
     'defineStudyArea.R'
     'extractDisturbanceFast.R'
-    'substrBoth.R'
     'forestAgePlot.R'
     'getLayers.R'
     'makeReclassifyMatrix.R'
