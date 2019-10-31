@@ -4,7 +4,7 @@
                                                sampleSize = "auto", redFactorTimes = 15,
                                                studyArea = NULL, repetition = NULL){ # limited to 2 years!
   if (is.null(species)){
-    spFiles <- grepMulti(x = list.files(folder), patterns = c(years[1],".tif"))
+    spFiles <- grepMulti(x = list.files(dataPath), patterns = c(years[1],".tif"))
     splittedAllNames <- strsplit(x = spFiles, split = "predicted") # including anything else i.e. diversity rasters
     splitted <- unlist(lapply(splittedAllNames, function(birdFilename){
       if (length(birdFilename)==1) return(NULL)
@@ -15,15 +15,15 @@
   if (length(years)>2) stop("Currently this function only compares 2 years")
   tableOfChanges <- data.table::rbindlist(lapply(species, function(bird){
     birdInyears <- lapply(years, function(y){
-      rasPath <- grepMulti(x = list.files(folder, recursive = TRUE, full.names = TRUE), patterns = c(bird, y))
+      rasPath <- grepMulti(x = list.files(dataPath, recursive = TRUE, full.names = TRUE), patterns = c(bird, y))
       rasValue <- data.table::data.table(raster::getValues(raster::raster(rasPath)))
       return(rasValue)
     })
     names(birdInyears) <- years
     dtForTest <- usefun::cbindFromList(birdInyears)
     if (!is.null(studyArea)){
-      # rasPath <- usefun::grepMulti(x = list.files(folder, recursive = TRUE, full.names = TRUE), patterns = c(bird)) # JUST A TEMPLATE!
-      # # location <- reproducible::Cache(prepStudyAreaForBirds, studyArea = studyArea, folder = folder, RTMpath = rasPath[1],
+      # rasPath <- usefun::grepMulti(x = list.files(dataPath, recursive = TRUE, full.names = TRUE), patterns = c(bird)) # JUST A TEMPLATE!
+      # # location <- reproducible::Cache(prepStudyAreaForBirds, studyArea = studyArea, dataPath = dataPath, RTMpath = rasPath[1],
       # #                                 userTags = c("object:location", "purpose:Edehzhie"))
       # browser() # see about only one study area
       dtForTest <- cbind(dtForTest, data.table::data.table(location = studyArea))
@@ -215,10 +215,10 @@
   return(list(mean1 = mean1, mean2 = mean2, p.value = p.value))
 }
 
-.prepStudyAreaForBirds <- function(studyArea, folder){
+.prepStudyAreaForBirds <- function(studyArea, dataPath){
   if (is(studyArea, "character")){
     studyArea <- prepInputs(url = studyArea, targetFile = "birdRTMEdehzhie.tif",
-                            destinationPath = folder,
+                            destinationPath = dataPath,
                             userTags = "birdRTMEdehzhie", filename2 = "birdRTMEdehzhie")
   }
   location <- raster::getValues(studyArea)
