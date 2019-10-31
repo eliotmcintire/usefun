@@ -4,16 +4,15 @@
 \alias{bootstrapPercentChanges}
 \title{Bootstraps rasters for testing significancy on comparable rasters of different species or scenarios}
 \usage{
-
-  bootstrapPercentChanges(dataPath = "/mnt/data/Micheletti/NWT/outputs/18JUL19/birdPredictionsV3_Fixed/",
-  years = c(2001, 2100), sampleSize = "auto", n = 100, shp = NULL)
+bootstrapPercentChanges(dataPath, years = c(2001, 2100),
+  sampleSize = "auto", n = 100, shp = NULL)
 }
 \arguments{
 \item{dataPath}{character. Path to raster data.}
 
 \item{years}{numeric. Years to compare. Currently this function only compares 2 years.}
 
-\item{sampleSize}{numeric or "auto" (default). What is the sample size (i.e. number of pixels) 
+\item{sampleSize}{numeric or "auto" (default). What is the sample size (i.e. number of pixels)
 we want to use on the bootstrapping? If "auto" it calculates internally
 Cohen's D And Hedges G Effect Size.}
 

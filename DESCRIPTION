@@ -63,6 +63,7 @@ Collate:
     'prepInputsLayers_DUCKS.R'
     'prepareClimateLayers.R'
     'provinceBCRStudyArea.R'
+    'reviseSpeciesTraits.R'
     'setTempFolder.R'
     'subsetNonNARas.R'
     'totalBiomassPerSpecies.R'
