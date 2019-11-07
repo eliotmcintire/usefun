@@ -28,8 +28,9 @@ Imports: LandR,
          effsize,
          gridExtra,
          pryr,
-	 future,
-	 future.apply
+	       future,
+	       future.apply,
+	       rasterVis
 Collate: 
     'RSFplot.R'
     'avrgTimeComparison.R'
