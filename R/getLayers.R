@@ -73,7 +73,7 @@ getLayers <- function(currentTime,
 
   ageMap <- raster(pixelGroupMap)
   valsAge <- data.table(pixelID = 1:ncell(ageMap), pixelGroup = getValues(x = pixelGroupMap))
-  newAgeVals <- valsAge[cohortData[, list(age = max(age)), by = "pixelGroup"], on = "pixelGroup"]
+  newAgeVals <- valsAge[cohortData[, list(age = max(age, na.rm = TRUE)), by = "pixelGroup"], on = "pixelGroup"]
   ageMap[newAgeVals$pixelID] <- newAgeVals$age
   names(ageMap) <- "ageMap"
 
