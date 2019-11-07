@@ -8,6 +8,8 @@
 #'                   we want to use on the bootstrapping? If "auto" it calculates internally
 #'                   Cohen's D And Hedges G Effect Size.
 #' @param n numeric. Default is 100. How many iterations (random selection of `sampleSize` pixels) should be done?
+#' @param species character. Default is NULL. Which species should this function be ran ?
+#' @param useFuture logical. Should use future to parallelize? Requires `future` and `future_apply`` packages
 #'
 #' @return list of significant species or scenarios with indication of increasing or decreasing
 #'
@@ -20,6 +22,8 @@
 #' @importFrom pryr where
 #' @importFrom effsize cohen.d
 #' @importFrom raster getValues raster
+#' @importFrom future plan
+#' @importFrom future.apply future_lapply
 #'
 #' @include helpersBirds.R
 #' @include grepMulti.R
@@ -32,7 +36,8 @@ bootstrapPercentChanges <- function(dataPath,
                                     years = c(2001, 2100),
                                     sampleSize = "auto",
                                     n = 100,
-                                    shp = NULL){
+                                    shp = NULL,
+                                    species = NULL, useFuture = FALSE){
 
   if (class(shp) == "character"){
     studyArea <- Cache(prepStudyAreaForBirds, studyArea = shp,
@@ -41,14 +46,15 @@ bootstrapPercentChanges <- function(dataPath,
   } else {
     studyArea <- shp
   }
-  fullTable <- lapply(1:n, function(repetition){
+  if (useFuture) plan("multiprocess") else plan("sequential")
+  fullTable <- future_lapply(1:n, function(repetition){
     message(crayon::yellow("Starting calculateSignificantChangesInBirds for repetition ", repetition, " TIME: ", Sys.time()))
-    t <- Sys.time
-    changesTable <- .calculateSignificantChangesInBirds(dataPath = dataPath, years = years,
+    t2 <- Sys.time()
+    changesTable <- lapply(dataPath, .calculateSignificantChangesInBirds, years = c(years[1], years[length(years)]),
                                                        sampleSize = sampleSize, studyArea = studyArea,
-                                                       repetition = repetition)
-    message(crayon::green("FINISHED calculateSignificantChangesInBirds for repetition ", repetition, " ELAPSED: ", Sys.time() - t))
-    t <- Sys.time()
+                                                       repetition = repetition, species = species)
+    message(crayon::green("FINISHED calculateSignificantChangesInBirds for repetition ", repetition, " ELAPSED: ", Sys.time() - t2))
+    t2 <- Sys.time()
     percentChange <- .calculatePercentageChanges(changesTable = changesTable, column = "result")
     return(list(changesTable = changesTable, percentChange = percentChange))
   })

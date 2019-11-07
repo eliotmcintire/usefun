@@ -5,7 +5,7 @@
 \title{Bootstraps rasters for testing significancy on comparable rasters of different species or scenarios}
 \usage{
 bootstrapPercentChanges(dataPath, years = c(2001, 2100),
-  sampleSize = "auto", n = 100, shp = NULL)
+  sampleSize = "auto", n = 100, shp = NULL, species = NULL)
 }
 \arguments{
 \item{dataPath}{character. Path to raster data.}
@@ -20,6 +20,8 @@ Cohen's D And Hedges G Effect Size.}
 
 \item{shp}{character or shapefile. If you wish to calculate these metrics for separate areas.
 Needs to match the rasters. Default is NULL (i.e. the whole raster is only one area)}
+
+\item{species}{character. Default is NULL. Which species should this function be ran ?}
 }
 \value{
 list of significant species or scenarios with indication of increasing or decreasing

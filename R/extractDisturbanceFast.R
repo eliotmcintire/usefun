@@ -92,9 +92,11 @@ tryCatch({
                                               pol = pol,
                                               shp = caribouShapefileRas,
                                               recoveryTime = recoveryTime)
-          if (percentFire$percentDisturbance < 0 | percentFire$percentDisturbance > 100 | is.na(percentFire$percentDisturbance))  # Data sanity check
-            stop("Something went wrong with the fire distubance calculation. Value is either negative or above 100%. Please debug.")
-      # ~~~~~~~~~~~~~~~~~~~
+          if (percentFire$percentDisturbance < 0 | percentFire$percentDisturbance > 100 | is.na(percentFire$percentDisturbance)){
+            print("Something went wrong with the fire distubance calculation. Value is either negative or above 100%. Please debug.")
+            browser() # Check pol
+          }  # Data sanity check
+          # ~~~~~~~~~~~~~~~~~~~
       # For anthropogenic:
       # From the anthropo layer we calculate for each polygon the total amount of pixels that had disturbances
       # over the total number of pixels "available" to have it (non-NA when na is JUST WATER).
@@ -103,9 +105,11 @@ tryCatch({
                                                     rule = "> 0", # Need to be a character string of the rule
                                                     pol = pol,
                                                     shp = caribouShapefileRas)
-          if (percentAnthopo$percentDisturbance < 0 | percentAnthopo$percentDisturbance > 100 | is.na(percentAnthopo$percentDisturbance))  # Data sanity check
-            stop("Something went wrong with the anthropogenic distubance calculation. Value is either negative or above 100%. Please debug.")
-      # ~~~~~~~~~~~~~~~~~~~
+          if (percentAnthopo$percentDisturbance < 0 | percentAnthopo$percentDisturbance > 100 | is.na(percentAnthopo$percentDisturbance)){
+            print("Something went wrong with the anthropogenic distubance calculation. Value is either negative or above 100%. Please debug.")
+            browser()
+          }
+            # ~~~~~~~~~~~~~~~~~~~
       # For total disturbance:
       # Need to overlay the disturbances and extract the total
           isDistrubance <- percentFire$isDisturbance | percentAnthopo$isDisturbance
@@ -119,9 +123,12 @@ tryCatch({
 " pixels disturbed. \nThis might need some digging... For now, converting to 100%")))
             percentCumm <- 100
           }  # Data sanity check
-          if (percentCumm < 0 )  # Data sanity check
-            stop("Something went wrong with the total distubance calculation. Value is either negative or above 100%. Please debug.")
-      # Making the data.frame
+          if (percentCumm < 0 ){  # Data sanity check
+              print("Something went wrong with the total distubance calculation. Value is either negative or above 100%. Please debug.")
+              browser()
+          }
+
+              # Making the data.frame
           df <- data.frame(DH_Fire = percentFire$percentDisturbance,
                            DH_Anthro = percentAnthopo$percentDisturbance,
                            DH_Total = percentCumm)

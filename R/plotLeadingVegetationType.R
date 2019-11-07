@@ -81,11 +81,13 @@ if (!isTRUE(overwrite)){
   # quickPlot::clearPlot()
   # for (index in seq_along(leadingSpecies))
   #   quickPlot::Plot(leadingSpecies[[index]], title = names(leadingSpecies)[[index]])
-clearPlot()
+  png(filename = file.path(dataPath, paste0("leadingVegetation", typeSim, ".png")), height = 600, width = 900)
+    quickPlot::clearPlot()
   quickPlot::Plot(leadingSpecies[[1]], title = paste0(names(leadingSpecies)[[1]], " - ", typeSim))
   quickPlot::Plot(leadingSpecies[[length(leadingSpecies)]],
                   title = paste0(names(leadingSpecies)[[length(leadingSpecies)]], " - ", typeSim)) # Shortcut for the current vs. future landscapes.
   # Couldn't get raster plot to work. Might be easier to make a ggplot
   p <- recordPlot()
+  dev.off()
   return(p)
 }

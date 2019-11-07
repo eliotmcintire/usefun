@@ -6,6 +6,7 @@
   if (is.null(species)){
     spFiles <- grepMulti(x = list.files(dataPath), patterns = c(years[1],".tif"))
     splittedAllNames <- strsplit(x = spFiles, split = "predicted") # including anything else i.e. diversity rasters
+    splittedAllNames2 <- splittedAllNames[!splittedAllNames %in% usefun::grepMulti(x = splittedAllNames, patterns = paste0("_", years[1]))]
     splitted <- unlist(lapply(splittedAllNames, function(birdFilename){
       if (length(birdFilename)==1) return(NULL)
       return(birdFilename[length(birdFilename)])
@@ -16,6 +17,10 @@
   tableOfChanges <- data.table::rbindlist(lapply(species, function(bird){
     birdInyears <- lapply(years, function(y){
       rasPath <- grepMulti(x = list.files(dataPath, recursive = TRUE, full.names = TRUE), patterns = c(bird, y))
+      if (length(rasPath)==0){
+        stop("The raster file for ", bird, " for year ", y, " wasn't found. Maybe not all species were run for all years? ",
+             "You can pass specific species to be ran using the argument 'species'")
+      }
       rasValue <- data.table::data.table(raster::getValues(raster::raster(rasPath)))
       return(rasValue)
     })
@@ -25,7 +30,6 @@
       # rasPath <- usefun::grepMulti(x = list.files(dataPath, recursive = TRUE, full.names = TRUE), patterns = c(bird)) # JUST A TEMPLATE!
       # # location <- reproducible::Cache(prepStudyAreaForBirds, studyArea = studyArea, dataPath = dataPath, RTMpath = rasPath[1],
       # #                                 userTags = c("object:location", "purpose:Edehzhie"))
-      # browser() # see about only one study area
       dtForTest <- cbind(dtForTest, data.table::data.table(location = studyArea))
       uniqueLocations <- unique(dtForTest$location)[!is.na(unique(dtForTest$location))]
       byLocationModelList <- lapply(uniqueLocations, function(locality){
@@ -64,7 +68,18 @@
 }
 
 .calculatePercentageChanges <- function(changesTable, column){
+  if (is(changesTable, "list")){
+    changesTable <- rbindlist(lapply(X = names(changesTable), FUN = function(simulation){
+      tb <- changesTable[[simulation]]
+      tb$simulation <- simulation
+      return(tb)
+    })
+    )
+  }
   if ("location" %in% names(changesTable)){
+    if ("simulation" %in% names(changesTable)){
+      stop("You have provided both locations and different simulations/scenarios for this analysis. This is still not supported.")
+    }
     dt <- data.table::rbindlist(lapply(unique(changesTable$location), function(locality){
       changesVector <- table(changesTable[location == locality, ..column,])
       dt <- data.table::data.table(direction = names(changesVector),
@@ -73,10 +88,20 @@
                                    location = locality)
     }))
   } else {
-    changesVector <- table(changesTable[, ..column])
-    dt <- data.table::data.table(direction = names(changesVector),
-                                 value = as.numeric(changesVector),
-                                 percent = 100*(as.numeric(changesVector)/NROW(changesTable)))
+    if ("simulation" %in% names(changesTable)){
+      dt <- data.table::rbindlist(lapply(unique(changesTable$simulation), function(scenario){
+        changesVector <- table(changesTable[simulation == scenario, ..column,])
+        dt <- data.table::data.table(direction = names(changesVector),
+                                     value = as.numeric(changesVector),
+                                     percent = 100*(as.numeric(changesVector)/NROW(changesTable[simulation == scenario, ..column,])),
+                                     simulation = scenario)
+      }))
+    } else {
+      changesVector <- table(changesTable[, ..column])
+      dt <- data.table::data.table(direction = names(changesVector),
+                                   value = as.numeric(changesVector),
+                                   percent = 100*(as.numeric(changesVector)/NROW(changesTable)))
+    }
   }
   return(dt)
 }
@@ -135,11 +160,23 @@
 }
 
 .whichSpeciesChangeDT <- function(tb){
-  inc <- tb[result == "increased", species]
-  dec <- tb[result == "decreased", species]
-  noChange <- tb[result == "no change", species]
-  dt <- list(increased = inc, decreased = dec, noChange = noChange)
+  if (!is(tb, "list")){
+    inc <- tb[result == "increased", species]
+    dec <- tb[result == "decreased", species]
+    noChange <- tb[result == "no change", species]
+    dt <- list(increased = inc, decreased = dec, noChange = noChange)
+  } else {
+    dt  <- lapply(names(tb), function(simul){
+      tbS <- tb[[simul]]
+      inc <- tbS[result == "increased", species]
+      dec <- tbS[result == "decreased", species]
+      noChange <- tbS[result == "no change", species]
+      dt <- list(increased = inc, decreased = dec, noChange = noChange)
+      return(dt)
+    })
+    names(dt) <- names(tb)
   return(dt)
+  }
 }
 
 .calculatePvalueOfRasters <- function(dtForTest, pixelBased = FALSE,
@@ -173,10 +210,12 @@
                            conf.level = 0.01, hedges.correction = TRUE)
           vectorSize <- vectorSize - round(vectorSize/redFactorTimes, 0)
         }
-        sampleSize <- length(newSample)
         message(crayon::green(paste0("Ideal sample size calculated as ",
-                                     sampleSize, "\n with sample size effect calcutated as")))
+                                     length(sampleSize), "\n with sample size effect calcutated as")))
         print(cohen)
+        stop(paste0("Please pass the ideal size calculated", length(sampleSize)," to the module's parameter 'sampleSize' and ",
+                    "restart the simulation (i.e. by using 'mySimOut <- restartSpades()'). ",
+                    "The current version still doesn't have this process automated"))
       }
       # SAMPLE FROM TABLE AND RUN THE TEST
       dtForTest$ID <- 1:NROW(dtForTest)

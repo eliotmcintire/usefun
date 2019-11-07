@@ -24,11 +24,12 @@ calculatePixelsInaRule <- function(ras,
   })
   vals <- raster::getValues(x = ras)
   shp[is.na(shp)] <- -1
-  polValues <- vals[shp[] == as.numeric(pol)]
+  polValues <- vals[shp[] == as.numeric(pol)] # Here we might have problems sometimes. Returns 0 character table. We only have NA's in the numeric pool!
   totPixelsNotNA <- sum(!is.na(polValues))
   isRecentDisturbance <- !is.na(polValues) & eval(parse(text = paste0("polValues", rule)))
   cummDisturbance <- sum(isRecentDisturbance, na.rm = TRUE)
   percentDisturbance <- 100*(cummDisturbance/totPixelsNotNA)
+  if (is.na(percentDisturbance)) browser()
   return(list(percentDisturbance = percentDisturbance,
               isDisturbance = isRecentDisturbance,
               totPixelsNotNA = totPixelsNotNA))
