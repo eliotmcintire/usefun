@@ -19,22 +19,51 @@ meanValuesTime <- function(ras,
                            initialTime){
   # scenario == "noCS" | "CS"
 browser()
-  fullTable <- lapply(ras, FUN = function(year){
-    modTable <- lapply(year, FUN = function(mod){
-meanAndUnc <- lapply(mod, function(eachRas){
-  average <- median(eachRas[], na.rm = TRUE)
-  rasType <- ifelse(grepl(names(eachRas), pattern = "Uncertain"), "SD", "AVERAGE")
-  yr <- as.numeric(substrBoth(string = names(eachRas), howManyCharacters = nchar(initialTime)))
-  dt <- data.table::data.table(average = average, year = yr, scenario = scenario)
-  return(dt)
-})
-  dt <- meanAndUnc[[1]]
-  dt$SD <-  meanAndUnc[[2]][["average"]]
-  dt$IC <- dt$SD*1.96
-return(dt)
+  if (is(ras, "RasterStack")){
+    fullTable <- lapply(names(ras), FUN = function(year){
+      modTable <- lapply(ras[[year]], FUN = function(mod){
+        if (is(mod, "list")){
+          meanAndUnc <- lapply(mod, function(eachRas){
+            average <- median(eachRas[], na.rm = TRUE)
+            rasType <- ifelse(grepl(names(eachRas), pattern = "Uncertain"), "SD", "AVERAGE")
+            yr <- as.numeric(substrBoth(string = names(eachRas), howManyCharacters = nchar(initialTime)))
+            dt <- data.table::data.table(average = average, year = yr, scenario = scenario)
+            return(dt)
+          })
+          dt <- meanAndUnc[[1]]
+          dt$SD <-  meanAndUnc[[2]][["average"]]
+          dt$IC <- dt$SD*1.96
+          return(dt)
+        } else {
+          average <- median(mod[], na.rm = TRUE)
+          rasType <- ifelse(grepl(names(mod), pattern = "Uncertain"), "SD", "AVERAGE")
+          yr <- as.numeric(substrBoth(strng = names(mod), howManyCharacters = nchar(initialTime[1]), fromEnd = TRUE))
+          dt <- data.table::data.table(average = average, year = yr, scenario = scenario, rasType = rasType)
+        return(dt)
+      }
+        })
+      return(rbindlist(modTable))
     })
-    return(rbindlist(modTable))
-  })
-  fullTable <- rbindlist(fullTable)
-return(fullTable)
+    fullTable <- rbindlist(fullTable)
+    return(fullTable)
+  } else {
+    fullTable <- lapply(ras, FUN = function(year){
+      modTable <- lapply(year, FUN = function(mod){
+        meanAndUnc <- lapply(mod, function(eachRas){
+          average <- median(eachRas[], na.rm = TRUE)
+          rasType <- ifelse(grepl(names(eachRas), pattern = "Uncertain"), "SD", "AVERAGE")
+          yr <- as.numeric(substrBoth(string = names(eachRas), howManyCharacters = nchar(initialTime)))
+          dt <- data.table::data.table(average = average, year = yr, scenario = scenario)
+          return(dt)
+        })
+        dt <- meanAndUnc[[1]]
+        dt$SD <-  meanAndUnc[[2]][["average"]]
+        dt$IC <- dt$SD*1.96
+        return(dt)
+      })
+      return(rbindlist(modTable))
+    })
+    fullTable <- rbindlist(fullTable)
+    return(fullTable)
+  }
 }
