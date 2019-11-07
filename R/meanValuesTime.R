@@ -17,8 +17,7 @@
 meanValuesTime <- function(ras,
                            scenario,
                            initialTime){
-  # scenario == "noCS" | "CS"
-browser()
+  # scenario == "LandR.CS_fS" | "LandR_fS" | "LandR_SCFM" | "LandR.CS_SCFM"
   if (is(ras, "RasterStack")){
     fullTable <- lapply(names(ras), FUN = function(year){
       modTable <- lapply(ras[[year]], FUN = function(mod){
@@ -35,10 +34,17 @@ browser()
           dt$IC <- dt$SD*1.96
           return(dt)
         } else {
-          average <- median(mod[], na.rm = TRUE)
           rasType <- ifelse(grepl(names(mod), pattern = "Uncertain"), "SD", "AVERAGE")
+          t1 <- Sys.time()
+          message("Calculating statistics for ", scenario, " for ", ifelse(rasType == "SD", "uncertainty", "average"), " TIME: ", t1)
+          Mean <- mean(mod[], na.rm = TRUE)
+          message("Calculating statistics for ", scenario, " for median")
+          Median <- median(mod[], na.rm = TRUE)
           yr <- as.numeric(substrBoth(strng = names(mod), howManyCharacters = nchar(initialTime[1]), fromEnd = TRUE))
-          dt <- data.table::data.table(average = average, year = yr, scenario = scenario, rasType = rasType)
+          dt <- data.table::data.table(average = Mean, Median = Median,
+                                       year = yr, scenario = scenario,
+                                       rasType = rasType)
+          message("Finished statistics for ", scenario, " for ", ifelse(rasType == "SD", "uncertainty", "average"), " TIME ELAPSED: ", Sys.time() - t1)
         return(dt)
       }
         })
