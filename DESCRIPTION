@@ -27,8 +27,12 @@ Imports: LandR,
          quickPlot,
          effsize,
          gridExtra,
-         pryr
+         pryr,
+	 future,
+	 future.apply
 Collate: 
+    'RSFplot.R'
+    'avrgTimeComparison.R'
     'biomassPerSpeciesYearGIF.R'
     'biomassYearGIF.R'
     'cbindFromList.R'
@@ -54,6 +58,7 @@ Collate:
     'forestAgePlot.R'
     'getLayers.R'
     'makeReclassifyMatrix.R'
+    'meanValuesTime.R'
     'moduleSticker.R'
     'modulesAvailable.R'
     'plotBurnSummary.R'
