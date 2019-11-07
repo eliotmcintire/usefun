@@ -26,7 +26,6 @@ moduleSticker <- function(moduleTable = NULL, moduleName,
                           directory = getwd(),
                           useCache = NULL, savedSticker = NULL,
                           ...){
-
   if (is.null(moduleName))
     stop("You have to specify the name of the module you want to generate the sticker for.
          If you don't know the available modules, please call `modulesAvailable()`")
@@ -71,7 +70,8 @@ moduleSticker <- function(moduleTable = NULL, moduleName,
           filename = savedSticker,
           fontface = "bold",
           dpi = 600,
-          lineheight = 0.13
+          lineheight = 0.13, 
+          asp = as.numeric(moduleTable[parameter == "asp", value]) # Not sure this breaks for other stickers... needs testing
           )
 
   # if (moduleName == "caribouLambda"){ # Gave up! Not working...
