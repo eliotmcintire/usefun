@@ -55,7 +55,7 @@ avrgTimeComparison <- function(...,
 }
     p <- p + geom_line(aes(color = scenario)) +
       theme_bw()
-  pngFig <- file.path(outputFolder, "average", comparisonID,"Comparison.png")
+  pngFig <- file.path(outputFolder, paste0("average", comparisonID,"Comparison.png"))
   png(pngFig, width = 700, height = 480)
   print(p)
   dev.off()

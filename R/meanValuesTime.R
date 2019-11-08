@@ -56,7 +56,7 @@ meanValuesTime <- function(ras,
         meanAndUnc <- lapply(eachRasToCalc, function(eachRas){
           average <- median(eachRas[], na.rm = TRUE)
           rasType <- ifelse(grepl(names(eachRas), pattern = "Uncertain"), "SD", "AVERAGE")
-          yr <- as.numeric(substrBoth(string = names(eachRas), howManyCharacters = nchar(initialTime)))
+          yr <- as.numeric(substrBoth(strng = names(eachRas), howManyCharacters = nchar(initialTime)))
           dt <- data.table::data.table(average = average, year = yr, scenario = scenario)
           return(dt)
         })
