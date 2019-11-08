@@ -70,7 +70,11 @@ getLayers <- function(currentTime,
   threadsDT <- getDTthreads()
   setDTthreads(1)
   on.exit({setDTthreads(threadsDT)}, add = TRUE)
-browser()
+  # Data assertions
+  if (NROW(cohortData) != NROW(na.omit(cohortData))){
+    warning("cohortData has NA values for one of the columns. Activating browser for debug")
+    browser()
+  }
   ageMap <- raster(pixelGroupMap)
   valsAge <- data.table(pixelID = 1:ncell(ageMap), pixelGroup = getValues(x = pixelGroupMap))
   newAgeVals <- valsAge[cohortData[, list(age = max(age, na.rm = TRUE)), by = "pixelGroup"], on = "pixelGroup"]
