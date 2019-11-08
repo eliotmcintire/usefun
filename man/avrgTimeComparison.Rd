@@ -4,7 +4,8 @@
 \alias{avrgTimeComparison}
 \title{Compare two or more scenarios for averages through time}
 \usage{
-avrgTimeComparison(..., upload, outputFolder, comparisonID, folderID)
+avrgTimeComparison(..., upload, outputFolder, comparisonID, folderID,
+  plotCI = TRUE)
 }
 \arguments{
 \item{...}{List or tables of results coming from usefun::meanValuesTime to be compared.}
@@ -18,6 +19,8 @@ raster exists OR is set to be written.}
 
 \item{folderID}{character. Google folder id to upload to.
 Only needs to be provided if `upload == TRUE`. Default is `NULL``}
+
+\item{plotCI}{logical. Should the plot have confidence interval?}
 }
 \value{
 list of significant species or scenarios with indication of increasing or decreasing

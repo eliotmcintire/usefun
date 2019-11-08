@@ -7,12 +7,13 @@
 #'               raster exists OR is set to be written.
 #' @param outputFolder character. Path to the folder where it should be saved.
 #' @param comparisonID character. Name to indentify the comparison (for file name)
+#' @param plotCI logical. Should the plot have confidence interval?
 #'
 #' @return list of significant species or scenarios with indication of increasing or decreasing
 #'
 #' @author Tati Micheletti
 #' @export
-#' @importFrom ggplot2 ggplot geom_line geom_ribbon theme_bw
+#' @importFrom ggplot2 ggplot geom_line geom_ribbon theme_bw aes
 #' @importFrom data.table data.table rbindlist
 #' @importFrom grDevices png
 #' @importFrom googledrive drive_upload as_id
@@ -23,7 +24,8 @@ avrgTimeComparison <- function(...,
                                upload,
                                outputFolder,
                                comparisonID,
-                               folderID){ # Caribou RSF average through time. Can take up to 2 comparisons for now
+                               folderID,
+                               plotCI = TRUE){ # Caribou RSF average through time. Can take up to 2 comparisons for now
 
   if (is.null(comparisonID))
     comparisonID <- "generic"
@@ -36,18 +38,23 @@ avrgTimeComparison <- function(...,
       return(max(unlist(lapply(this,depth,thisdepth=thisdepth+1))))
     }
   }
-  browser()
-  while (depth(dots) != 1){
+  while (depth(dots) != 2){
     dots <- unlist(dots, recursive = FALSE)
   }
-  browser()
-  dt <- do.call("rbind", unlisted)
 
   dt <- rbindlist(dots)
-  p <- ggplot(data = dt, aes(x = year, y = average, ymin = (average - IC), ymax = (average + IC), group = scenario)) +
-    geom_line(aes(color = scenario)) +
-    geom_ribbon(aes(fill = scenario), alpha = 0.5) +
-    theme_bw()
+  dtAverage <- subset(x = dt, rasType == "AVERAGE")
+  dtSd <- subset(x = dt, rasType == "SD")
+  dtSd[, IC := average*1.96]
+  dtSd <- dtSd[, c("year", "scenario", "IC")]
+  dt <- merge(dtAverage, dtSd)
+  p <- ggplot(data = dt, aes(x = year, y = average,
+                             group = scenario))
+ if (plotCI) {
+    p <- p +  geom_ribbon(aes(fill = scenario, ymin = (average - IC), ymax = (average + IC)), alpha = 0.5)
+}
+    p <- p + geom_line(aes(color = scenario)) +
+      theme_bw()
   pngFig <- file.path(outputFolder, "average", comparisonID,"Comparison.png")
   png(pngFig, width = 700, height = 480)
   print(p)
