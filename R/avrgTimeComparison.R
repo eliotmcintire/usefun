@@ -28,8 +28,21 @@ avrgTimeComparison <- function(...,
   if (is.null(comparisonID))
     comparisonID <- "generic"
 
-  browser()
   dots <- list(...) # List/individual data.tables (the latter if outside of modules) of results coming from sim$averageInTime
+  depth <- function(this,thisdepth=0){
+    if(!is.list(this)){
+      return(thisdepth)
+    }else{
+      return(max(unlist(lapply(this,depth,thisdepth=thisdepth+1))))
+    }
+  }
+  browser()
+  while (depth(dots) != 1){
+    dots <- unlist(dots, recursive = FALSE)
+  }
+  browser()
+  dt <- do.call("rbind", unlisted)
+
   dt <- rbindlist(dots)
   p <- ggplot(data = dt, aes(x = year, y = average, ymin = (average - IC), ymax = (average + IC), group = scenario)) +
     geom_line(aes(color = scenario)) +
