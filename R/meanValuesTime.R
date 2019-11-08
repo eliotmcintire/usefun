@@ -25,7 +25,7 @@ meanValuesTime <- function(ras,
           meanAndUnc <- lapply(mod, function(eachRas){
             average <- median(eachRas[], na.rm = TRUE)
             rasType <- ifelse(grepl(names(eachRas), pattern = "Uncertain"), "SD", "AVERAGE")
-            yr <- as.numeric(substrBoth(string = names(eachRas), howManyCharacters = nchar(initialTime)))
+            yr <- as.numeric(substrBoth(strng = names(eachRas), howManyCharacters = nchar(initialTime)))
             dt <- data.table::data.table(average = average, year = yr, scenario = scenario)
             return(dt)
           })
@@ -36,18 +36,21 @@ meanValuesTime <- function(ras,
         } else {
           rasType <- ifelse(grepl(names(mod), pattern = "Uncertain"), "SD", "AVERAGE")
           t1 <- Sys.time()
-          message("Calculating statistics for ", scenario, " for ", ifelse(rasType == "SD", "uncertainty", "average"), " TIME: ", t1)
           Mean <- mean(mod[], na.rm = TRUE)
-          message("Calculating statistics for ", scenario, " for median")
           Median <- median(mod[], na.rm = TRUE)
           yr <- as.numeric(substrBoth(strng = names(mod), howManyCharacters = nchar(initialTime[1]), fromEnd = TRUE))
           dt <- data.table::data.table(average = Mean, Median = Median,
                                        year = yr, scenario = scenario,
                                        rasType = rasType)
-          message("Finished statistics for ", scenario, " for ", ifelse(rasType == "SD", "uncertainty", "average"), " TIME ELAPSED: ", Sys.time() - t1)
+          message("Finished statistics for ", scenario, " for ",
+                  ifelse(rasType == "SD", "uncertainty", "average"), " for year ",
+                  yr, " TIME ELAPSED: ", Sys.time() - t1)
+          browser()
         return(dt)
-      }
+        }
+        browser()
         })
+      browser()
       return(rbindlist(modTable))
     })
     fullTable <- rbindlist(fullTable)
