@@ -20,7 +20,7 @@ meanValuesTime <- function(ras,
   # scenario == "LandR.CS_fS" | "LandR_fS" | "LandR_SCFM" | "LandR.CS_SCFM"
   if (is(ras, "RasterStack")){
     fullTable <- lapply(names(ras), FUN = function(year){
-      eachRasToCalcTable <- lapply(ras[[year]], FUN = function(eachRasToCalc){
+      eachRasToCalc <- ras[[year]]
         if (is(eachRasToCalc, "list")){
           meanAndUnc <- lapply(eachRasToCalc, function(eachRas){
             average <- median(eachRas[], na.rm = TRUE)
@@ -34,7 +34,6 @@ meanValuesTime <- function(ras,
           dt$IC <- dt$SD*1.96
           return(dt)
         } else {
-          browser()
           rasType <- ifelse(grepl(names(eachRasToCalc), pattern = "Uncertain"), "SD", "AVERAGE")
           t1 <- Sys.time()
           Mean <- mean(eachRasToCalc[], na.rm = TRUE)
@@ -46,13 +45,8 @@ meanValuesTime <- function(ras,
           message("Finished statistics for ", scenario, " for ",
                   ifelse(rasType == "SD", "uncertainty", "average"), " for year ",
                   yr, " TIME ELAPSED: ", Sys.time() - t1)
-          browser()
         return(dt)
         }
-        browser()
-        })
-      browser()
-      return(rbindlist(eachRasToCalcTable))
     })
     fullTable <- rbindlist(fullTable)
     return(fullTable)
