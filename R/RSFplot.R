@@ -69,7 +69,6 @@ RSFplot <- function(ras,
       googledrive::drive_upload(file.path(outputFolder, rasNameFinal),
                                 path = googledrive::as_id(folderID))
     }
-
     })
 
   return(r)
