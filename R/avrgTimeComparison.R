@@ -69,8 +69,10 @@ avrgTimeComparison <- function(...,
   png(pngFig, width = 700, height = 480)
   print(p)
   dev.off()
-  if(upload)
+  if(upload){
     googledrive::drive_upload(pngFig,
                               path = googledrive::as_id(folderID))
+    message("averageComparison was saved in", ": https://drive.google.com/drive/u/0/folders/", folderID)
+  }
   return(p)
 }

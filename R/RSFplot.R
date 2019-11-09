@@ -13,10 +13,11 @@
 #'
 #' @author Tati Micheletti
 #' @export
+#' @importFrom crayon green red
 #' @importFrom raster getValues raster reclassify writeRaster nlayers
 #' @importFrom rasterVis gplot
 #' @importFrom googledrive drive_upload as_id
-#' @importFrom ggplot2 geom_raster scale_fill_manual coord_equal labs
+#' @importFrom ggplot2 geom_raster scale_fill_manual coord_equal labs element_blank theme
 #' @importFrom grDevices colorRampPalette
 #'
 #' @rdname RSFplot
@@ -27,8 +28,11 @@ RSFplot <- function(ras,
                     outputFolder = tempdir(),
                     rasName,
                     folderID = NULL){
-
-  vals <- raster::getValues(ras)
+  if (is(ras, "RasterStack")){
+    vals <- raster::getValues(ras[[1]])
+  } else {
+    vals <- raster::getValues(ras)
+  }
   getBin <- function(vals){
     (max(vals, na.rm = TRUE)-min(vals, na.rm = TRUE))/10
   }
@@ -49,16 +53,25 @@ RSFplot <- function(ras,
 
   greenRed<-colorRampPalette(c("darkgreen","yellow","red"))
   colsGR <- greenRed(10)
-  lapply(1:nlayers, function(lay){
-    rasNameFinal <- file.path(outputFolder, paste0(rasName,
-                                                   usefun::substrBoth(strng = names(r[[lay]]),
-                                                                      howManyCharacters = 4,
-                                                                      fromEnd = TRUE), ".tif"))
+stk <-  lapply(1:nlayers(x = r), function(lay){
+    y <- usefun::substrBoth(strng = names(r[[lay]]),
+                       howManyCharacters = 4,
+                       fromEnd = TRUE)
+    rasNameFinal <- file.path(outputFolder, paste0(rasName,"_",
+                                                   y, ".tif"))
+    library("ggplot2")
     p <- gplot(r[[lay]]) +
       geom_raster(aes(fill = factor(value))) +
       scale_fill_manual(values = colsGR, aesthetics = "fill") +
       coord_equal() +
-      labs(fill = "RSF")
+      labs(fill = paste0("RSF ", y)) +
+      theme(panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank(),
+            panel.background = element_blank(),
+            axis.title = element_blank(),
+            axis.text = element_blank(),
+            axis.ticks = element_blank())
+
     print(p)
     if (writeReclasRas)
       writeRaster(r[[lay]], filename = rasNameFinal, format = "GTiff",
@@ -69,9 +82,11 @@ RSFplot <- function(ras,
       googledrive::drive_upload(file.path(outputFolder, rasNameFinal),
                                 path = googledrive::as_id(folderID))
     }
+    message("Finished RSF like plot for ", rasName, " year ", y)
+    return(r[[lay]])
     })
-
-  return(r)
+message(crayon::green("Finished RSF like plots for all scenarios and years"))
+  return(stk)
 }
 
 
