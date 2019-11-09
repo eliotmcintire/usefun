@@ -13,7 +13,7 @@
 #'
 #' @author Tati Micheletti
 #' @export
-#' @importFrom ggplot2 ggplot geom_line geom_ribbon theme_bw aes
+#' @importFrom ggplot2 ggplot geom_line geom_ribbon theme_bw aes facet_grid
 #' @importFrom data.table data.table rbindlist
 #' @importFrom grDevices png
 #' @importFrom googledrive drive_upload as_id
@@ -41,20 +41,30 @@ avrgTimeComparison <- function(...,
   while (depth(dots) != 2){
     dots <- unlist(dots, recursive = FALSE)
   }
-
+  dots <- lapply(1:length(dots), function(index){
+    dots[[index]]$grouping <- names(dots)[index]
+    return(dots[[index]])
+  })
   dt <- rbindlist(dots)
   dtAverage <- subset(x = dt, rasType == "AVERAGE")
   dtSd <- subset(x = dt, rasType == "SD")
-  dtSd[, IC := average*1.96]
-  dtSd <- dtSd[, c("year", "scenario", "IC")]
-  dt <- merge(dtAverage, dtSd)
+  if (NROW(dtSd) != 0){
+    dtSd[, IC := average*1.96]
+    dtSd <- dtSd[, c("year", "scenario", "IC")]
+    dt <- merge(dtAverage, dtSd)
+  }
   p <- ggplot(data = dt, aes(x = year, y = average,
                              group = scenario))
- if (plotCI) {
+ if (plotCI & NROW(dtSd) != 0) {
     p <- p +  geom_ribbon(aes(fill = scenario, ymin = (average - IC), ymax = (average + IC)), alpha = 0.5)
 }
     p <- p + geom_line(aes(color = scenario)) +
       theme_bw()
+  if (length(unique(dt$grouping)) != 1){
+    p <- p + facet_grid(grouping ~ ., scales = "free_y") +
+      theme(legend.position = "bottom")
+  }
+
   pngFig <- file.path(outputFolder, paste0("average", comparisonID,"Comparison.png"))
   png(pngFig, width = 700, height = 480)
   print(p)

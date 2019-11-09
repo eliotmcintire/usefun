@@ -29,7 +29,6 @@ calculatePixelsInaRule <- function(ras,
   isRecentDisturbance <- !is.na(polValues) & eval(parse(text = paste0("polValues", rule)))
   cummDisturbance <- sum(isRecentDisturbance, na.rm = TRUE)
   percentDisturbance <- 100*(cummDisturbance/totPixelsNotNA)
-  if (is.na(percentDisturbance)) browser()
   return(list(percentDisturbance = percentDisturbance,
               isDisturbance = isRecentDisturbance,
               totPixelsNotNA = totPixelsNotNA))

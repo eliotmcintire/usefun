@@ -13,10 +13,10 @@
 #'
 #' @author Tati Micheletti
 #' @export
-#' @importFrom raster getValues raster reclassify writeRaster
+#' @importFrom raster getValues raster reclassify writeRaster nlayers
 #' @importFrom rasterVis gplot
 #' @importFrom googledrive drive_upload as_id
-#' @importFrom ggplot2 geom_raster scale_fill_manual coord_equal
+#' @importFrom ggplot2 geom_raster scale_fill_manual coord_equal labs
 #' @importFrom grDevices colorRampPalette
 #'
 #' @rdname RSFplot
@@ -34,7 +34,6 @@ RSFplot <- function(ras,
   }
   bin <- getBin(vals)
   mn <- min(vals, na.rm = TRUE)
-
   m <- matrix(c(mn-1, mn+bin, 1,
                 mn+bin, mn+bin*2, 2,
                 mn+bin*2, mn+bin*3, 3,
@@ -50,21 +49,28 @@ RSFplot <- function(ras,
 
   greenRed<-colorRampPalette(c("darkgreen","yellow","red"))
   colsGR <- greenRed(10)
+  lapply(1:nlayers, function(lay){
+    rasNameFinal <- file.path(outputFolder, paste0(rasName,
+                                                   usefun::substrBoth(strng = names(r[[lay]]),
+                                                                      howManyCharacters = 4,
+                                                                      fromEnd = TRUE), ".tif"))
+    p <- gplot(r[[lay]]) +
+      geom_raster(aes(fill = factor(value))) +
+      scale_fill_manual(values = colsGR, aesthetics = "fill") +
+      coord_equal() +
+      labs(fill = "RSF")
+    print(p)
+    if (writeReclasRas)
+      writeRaster(r[[lay]], filename = rasNameFinal, format = "GTiff",
+                  overwrite = TRUE)
 
-p <- gplot(r) +
-     geom_raster(aes(fill = factor(value))) +
-     scale_fill_manual(values = colsGR, aesthetics = "fill")
-     coord_equal()
+    if(upload){
+      if (is.null(folderID)) stop("Please provide folderID when upload == TRUE")
+      googledrive::drive_upload(file.path(outputFolder, rasNameFinal),
+                                path = googledrive::as_id(folderID))
+    }
 
-  print(p)
-  if (writeReclasRas)
-  writeRaster(r, filename = file.path(outputFolder, rasName), format = "GTiff")
-
-  if(upload){
-    if (is.null(folderID)) stop("Please provide folderID when upload == TRUE")
-    googledrive::drive_upload(file.path(outputFolder, rasName),
-                              path = googledrive::as_id(folderID))
-  }
+    })
 
   return(r)
 }

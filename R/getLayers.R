@@ -25,6 +25,7 @@
 #' @author Tati Micheletti
 #' @export
 #' @importFrom LandR prepInputsLCC
+#' @importFrom crayon red
 #' @importFrom raster raster projectRaster extract dropLayer stack
 #' @importFrom SpaDES.tools rasterizeReduced
 #' @importFrom data.table data.table setkey
@@ -71,8 +72,8 @@ getLayers <- function(currentTime,
   setDTthreads(1)
   on.exit({setDTthreads(threadsDT)}, add = TRUE)
   # Data assertions
-  if (NROW(cohortData) != NROW(na.omit(cohortData))){
-    warning("cohortData has NA values for one of the columns. Activating browser for debug")
+  if (length(!is.na(cohortData$age)) != length(is.na(cohortData$age))){
+    message(crayon::red("cohortData age has NA values and shouldn't. Activating browser for debug"))
     browser()
   }
   ageMap <- raster(pixelGroupMap)

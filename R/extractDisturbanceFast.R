@@ -92,10 +92,15 @@ tryCatch({
                                               pol = pol,
                                               shp = caribouShapefileRas,
                                               recoveryTime = recoveryTime)
-          if (percentFire$percentDisturbance < 0 | percentFire$percentDisturbance > 100 | is.na(percentFire$percentDisturbance)){
+          if (percentFire$percentDisturbance < 0 | percentFire$percentDisturbance > 100){
             print("Something went wrong with the fire distubance calculation. Value is either negative or above 100%. Please debug.")
             browser() # Check pol
           }  # Data sanity check
+          if (is.na(percentFire$percentDisturbance)){
+            message(crayon::red("Percent disturbance from fire is NA. Fire probably burned the whole area and nothing is regenerating.
+                    Will set the disturbance to 100%, but causes should be investigated."))
+            percentFire$percentDisturbance <- 100
+          }
           # ~~~~~~~~~~~~~~~~~~~
       # For anthropogenic:
       # From the anthropo layer we calculate for each polygon the total amount of pixels that had disturbances
@@ -105,10 +110,16 @@ tryCatch({
                                                     rule = "> 0", # Need to be a character string of the rule
                                                     pol = pol,
                                                     shp = caribouShapefileRas)
-          if (percentAnthopo$percentDisturbance < 0 | percentAnthopo$percentDisturbance > 100 | is.na(percentAnthopo$percentDisturbance)){
+          if (percentAnthopo$percentDisturbance < 0 | percentAnthopo$percentDisturbance > 100){
             print("Something went wrong with the anthropogenic distubance calculation. Value is either negative or above 100%. Please debug.")
             browser()
           }
+          if (is.na(percentAnthopo$percentDisturbance)){
+            message(crayon::red("Percent disturbance from fire is NA. Fire probably burned the whole area and nothing is regenerating.
+                    Will set the disturbance to 100%, but causes should be investigated."))
+            percentAnthopo$percentDisturbance <- 100
+          }
+
             # ~~~~~~~~~~~~~~~~~~~
       # For total disturbance:
       # Need to overlay the disturbances and extract the total
@@ -119,12 +130,13 @@ tryCatch({
           cummDist <- sum(isDistrubance, na.rm = TRUE)
           percentCumm <- 100*(cummDist/totPixelsNotNADist)
           if (percentCumm > 100){
-            message(crayon::red(paste0("Total disturbance for polygon ", crayon::cyan(caribouShapefileSF[[nm]][pol]), " presented ", crayon::cyan(paste0(round(percentCumm, 0),"%")),
-" pixels disturbed. \nThis might need some digging... For now, converting to 100%")))
+            message(crayon::red(paste0("Total disturbance for polygon ", crayon::cyan(caribouShapefileSF[[nm]][pol]), " presented ",
+                                       crayon::cyan(paste0(round(percentCumm, 0),"%")),
+                                       " pixels disturbed. \nThis might need some digging... For now, converting to 100%")))
             percentCumm <- 100
           }  # Data sanity check
           if (percentCumm < 0 ){  # Data sanity check
-              print("Something went wrong with the total distubance calculation. Value is either negative or above 100%. Please debug.")
+              print("Something went wrong with the total distubance calculation. Value is negative. Please debug.")
               browser()
           }
 
