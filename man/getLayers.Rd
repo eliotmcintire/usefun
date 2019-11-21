@@ -5,26 +5,11 @@
 \title{getLayers gets the necessary layers for predictive modules such as caribouPopGrowth and caribouRSF.
 It is a function designed to work inside a SpaDES module.}
 \usage{
-getLayers(
-  currentTime,
-  cohortData,
-  pixelGroupMap,
-  startTime,
-  endTime,
-  recoveryTime = 40,
-  listSACaribou,
-  anthropogenicLayer,
-  roadDensity,
-  waterRaster,
-  isRSF = FALSE,
-  decidousSp = NULL,
-  oldBurnTime = NULL,
-  elevation = NULL,
-  vrug = NULL,
-  LCC05 = NULL,
-  reclassLCC05 = NULL,
-  rasterToMatch = NULL
-)
+getLayers(currentTime, cohortData, pixelGroupMap, startTime, endTime,
+  recoveryTime = 40, listSACaribou, anthropogenicLayer, roadDensity,
+  waterRaster, isRSF = FALSE, decidousSp = NULL, oldBurnTime = NULL,
+  elevation = NULL, vrug = NULL, LCC05 = NULL, reclassLCC05 = NULL,
+  rasterToMatch = NULL)
 }
 \arguments{
 \item{currentTime}{numeric. Current time being used (i.e. \code{time(sim)}).}

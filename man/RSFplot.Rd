@@ -4,14 +4,8 @@
 \alias{RSFplot}
 \title{ECCC's RSF plot style}
 \usage{
-RSFplot(
-  ras,
-  upload = FALSE,
-  writeReclasRas = FALSE,
-  outputFolder = tempdir(),
-  rasName,
-  folderID = NULL
-)
+RSFplot(ras, upload = FALSE, writeReclasRas = FALSE,
+  outputFolder = tempdir(), rasName, folderID = NULL)
 }
 \arguments{
 \item{ras}{RasterLayer. Layer to generate 10 binned green to red (caribou RSF) map.}

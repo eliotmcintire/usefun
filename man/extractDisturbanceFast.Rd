@@ -4,14 +4,8 @@
 \alias{extractDisturbanceFast}
 \title{extractDisturbanceFast extracts disturbance of anthropogenic and fire}
 \usage{
-extractDisturbanceFast(
-  ageMap,
-  caribouShapefile,
-  recoveryTime = 40,
-  anthropogenicLayer = NULL,
-  waterRaster,
-  rasterToMatch
-)
+extractDisturbanceFast(ageMap, caribouShapefile, recoveryTime = 40,
+  anthropogenicLayer = NULL, waterRaster, rasterToMatch)
 }
 \arguments{
 \item{ageMap}{RasterLayer. Map with forest age.}
