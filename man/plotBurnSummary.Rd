@@ -4,8 +4,13 @@
 \alias{plotBurnSummary}
 \title{Plots summary of burns}
 \usage{
-plotBurnSummary(dataPath, typeSim, lastYear, theObject = NULL,
-  overwrite = FALSE)
+plotBurnSummary(
+  dataPath,
+  typeSim,
+  lastYear,
+  theObject = NULL,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{dataPath}{character. Path to data}

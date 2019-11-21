@@ -4,8 +4,14 @@
 \alias{avrgTimeComparison}
 \title{Compare two or more scenarios for averages through time}
 \usage{
-avrgTimeComparison(..., upload, outputFolder, comparisonID, folderID,
-  plotCI = TRUE)
+avrgTimeComparison(
+  ...,
+  upload,
+  outputFolder,
+  comparisonID,
+  folderID,
+  plotCI = TRUE
+)
 }
 \arguments{
 \item{...}{List or tables of results coming from usefun::meanValuesTime to be compared.}

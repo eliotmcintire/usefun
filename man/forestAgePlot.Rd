@@ -4,8 +4,12 @@
 \alias{forestAgePlot}
 \title{Plots of forest age}
 \usage{
-forestAgePlot(dataPath, typeSim, addCaribousuitability = FALSE,
-  overwrite = FALSE)
+forestAgePlot(
+  dataPath,
+  typeSim,
+  addCaribousuitability = FALSE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{dataPath}{character. Path to data}

@@ -4,9 +4,15 @@
 \alias{bootstrapPercentChanges}
 \title{Bootstraps rasters for testing significancy on comparable rasters of different species or scenarios}
 \usage{
-bootstrapPercentChanges(dataPath, years = c(2001, 2100),
-  sampleSize = "auto", n = 100, shp = NULL, species = NULL,
-  useFuture = FALSE)
+bootstrapPercentChanges(
+  dataPath,
+  years = c(2001, 2100),
+  sampleSize = "auto",
+  n = 100,
+  shp = NULL,
+  species = NULL,
+  useFuture = FALSE
+)
 }
 \arguments{
 \item{dataPath}{character. Path to raster data.}

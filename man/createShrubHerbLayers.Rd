@@ -5,8 +5,12 @@
 \title{createShrubHerbLayers creates the necessary shrub or herb layers for predictive caribou RSF module. 
 It is a function designed to work inside a SpaDES module.}
 \usage{
-createShrubHerbLayers(landCoverECCC, reclassLCC05, layerName,
-  includeCrops = FALSE)
+createShrubHerbLayers(
+  landCoverECCC,
+  reclassLCC05,
+  layerName,
+  includeCrops = FALSE
+)
 }
 \arguments{
 \item{landCoverECCC}{RasterLayer LCC2005 reclassified to ECCC land cover.}

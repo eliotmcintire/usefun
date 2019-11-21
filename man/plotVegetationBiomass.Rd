@@ -4,8 +4,14 @@
 \alias{plotVegetationBiomass}
 \title{Plots vegetation biomass Type using cohortData and pixelGroupMap}
 \usage{
-plotVegetationBiomass(years = c(2011, 2100), dataPath, typeSim,
-  colNA = "grey85", saveRAS = TRUE, overwrite = FALSE)
+plotVegetationBiomass(
+  years = c(2011, 2100),
+  dataPath,
+  typeSim,
+  colNA = "grey85",
+  saveRAS = TRUE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{years}{numeric. Years available/intended to be used for the giphy}

@@ -8,13 +8,26 @@ This function uses \code{usefun::createEquation()} internally}
 \usage{
 createModels(caribouCoefTable = NULL, modelsToUse = "M3")
 
-prepareClimateLayers(pathInputs = NULL, variables = NULL,
-  years = NULL, GDriveFolder = NULL, climateFilePath = NULL,
-  fileResolution = NULL, authEmail = NULL, RCP = NULL,
-  climateModel = NULL, ensemble = NULL, rasterToMatch = NULL,
-  studyArea = NULL, model = NULL, doughtMonths = 4:9,
+prepareClimateLayers(
+  pathInputs = NULL,
+  variables = NULL,
+  years = NULL,
+  GDriveFolder = NULL,
+  climateFilePath = NULL,
+  fileResolution = NULL,
+  authEmail = NULL,
+  RCP = NULL,
+  climateModel = NULL,
+  ensemble = NULL,
+  rasterToMatch = NULL,
+  studyArea = NULL,
+  model = NULL,
+  doughtMonths = 4:9,
   returnCalculatedLayersForFireSense = FALSE,
-  yearsWithClimateProjections = 2011:2100)
+  yearsWithClimateProjections = 2011:2100,
+  overwrite = FALSE,
+  overwriteOriginalData = FALSE
+)
 }
 \arguments{
 \item{caribouCoefTable}{data.table of the coefficient values for all models available. If not provided,
@@ -55,6 +68,11 @@ If you wanna provide the variables to be produced, don't use birds or fireSense 
 \item{returnCalculatedLayersForFireSense}{Logical. Should it calculate MDC (TRUE) or return the original variables (FALSE)? Default is FALSE.}
 
 \item{yearsWithClimateProjections}{Numeric. The user can pass the years that have climate projection in the data. Default to 2011:2100.}
+
+\item{overwrite}{logical. Default to FALSE. Should the layers be overwritten if exist?}
+
+\item{overwriteOriginalData}{logical. Default to FALSE. If changes happen in the original layer (the one provided in climateFilePath),
+set this to TRUE to overwrite the zip files downloaded.}
 }
 \value{
 names list of the quote of the model that can be parsed to generate the simulated data bootstrapped

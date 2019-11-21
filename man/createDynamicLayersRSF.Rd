@@ -7,12 +7,32 @@
 \title{createDynamicLayerRSF creates the necessary layers for predictive caribou RSF module.
 It is a function designed to work inside a SpaDES module.}
 \usage{
-createDynamicLayersRSF(ageMap, biomassMap, biomassMapName, oldBurnTime,
-  oldBurnName, newBurnName, roadDensity, roadDensityName, waterRaster,
-  waterRasterName, RTM)
+createDynamicLayersRSF(
+  ageMap,
+  biomassMap,
+  biomassMapName,
+  oldBurnTime,
+  oldBurnName,
+  newBurnName,
+  roadDensity,
+  roadDensityName,
+  waterRaster,
+  waterRasterName,
+  RTM
+)
 
-createStaticLayersRSF(elevation, vrug, LCC, shrubName, herbName,
-  elevationName, vrugName, reclassLCC05, dynamicLayers, RTM)
+createStaticLayersRSF(
+  elevation,
+  vrug,
+  LCC,
+  shrubName,
+  herbName,
+  elevationName,
+  vrugName,
+  reclassLCC05,
+  dynamicLayers,
+  RTM
+)
 }
 \arguments{
 \item{ageMap}{RasterLayer. Map with forest age.}
@@ -57,8 +77,6 @@ The end of this time is 20 years later (i.e. 40-60 years).}
 
 \item{dynamicLayers}{RasterStack to be stacked with the staticLayers
 created in the current function to be passed for the model prediction.}
-
-\item{RTM}{RasterLayer template for these layers to match.}
 }
 \value{
 RasterStack of layers

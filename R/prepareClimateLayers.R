@@ -32,6 +32,11 @@
 #'
 #' @param yearsWithClimateProjections Numeric. The user can pass the years that have climate projection in the data. Default to 2011:2100.
 #'
+#' @param overwrite logical. Default to FALSE. Should the layers be overwritten if exist?
+#'
+#' @param overwriteOriginalData logical. Default to FALSE. If changes happen in the original layer (the one provided in climateFilePath),
+#'                              set this to TRUE to overwrite the zip files downloaded.
+#'
 #' @return This function returns a list of all years, with each year being the local path for the raster stack that contains all variables
 #'
 #' @author Tati Micheletti
@@ -62,7 +67,9 @@ prepareClimateLayers <- function(pathInputs = NULL,
                                  model = NULL, # 'birds', 'fireSense'. If you wanna provide other variables, don't use birds or fireSense here.
                                  doughtMonths = 4:9, # Months for fireSense to calculate MonthDoughtCode (MDC)
                                  returnCalculatedLayersForFireSense = FALSE,
-                                 yearsWithClimateProjections = 2011:2100){ # If TRUE, it returns the calculated MDC layers already, not the original stack with Tmax and PPT
+                                 yearsWithClimateProjections = 2011:2100,
+                                 overwrite = FALSE,
+                                 overwriteOriginalData = FALSE){ # If TRUE, it returns the calculated MDC layers already, not the original stack with Tmax and PPT
 
   # Check if the year is in the climate projection range. If not, don't even bother, return a raster of NA's
   if (!all(years %in% 2011:2100)) {
@@ -173,24 +180,23 @@ prepareClimateLayers <- function(pathInputs = NULL,
     }
 
   # 2. Check if we have the years chosen (we should lapply through years)
-
 yearsList <- lapply(X = years, FUN = function(y){
-  if (all(model == "fireSense", isTRUE(returnCalculatedLayersForFireSense))){
+  if (all(model == "fireSense", isTRUE(returnCalculatedLayersForFireSense), !isTRUE(overwrite))){
     fileName <- file.path(pathInputs, paste0(paste(climateModel, RCP, ensemble,
                                                    fileResolution, model, "Calc", y, sep = "_"), ".grd"))
   } else {
     fileName <- file.path(pathInputs, paste0(paste(climateModel, RCP, ensemble, fileResolution, model, y, sep = "_"), ".grd"))
     dType <- "INT4S"
   }
-  if (file.exists(fileName)) {
+  if (all(file.exists(fileName), !isTRUE(overwrite))) {
     message(green(paste0(fileName, " exists. Returning the raster stack")))
     # A. If we have the year, return
     return(stack(fileName))
   } else {
     # B. If we don't have the year LOCALLY, see if we have in the cloud
-    message(yellow(paste0(fileName, " does not exist locally. Checking the cloud... ")))
+    message(yellow(paste0(fileName, " does not exist locally or should be overwritten. Checking the cloud... ")))
     filesInFolder <- drive_ls(path = as_id(GDriveFolder), recursive = FALSE)
-    if (paste0(basename2(file_path_sans_ext(fileName)), ".zip") %in% filesInFolder$name){
+    if (all(paste0(basename2(file_path_sans_ext(fileName)), ".zip") %in% filesInFolder$name, !isTRUE(overwrite))){
       rw <- which(filesInFolder$name == paste0(basename2(tools::file_path_sans_ext(fileName)), ".zip"))
       # googledrive::drive_download(file = as_id(filesInFolder$id[rw]),
       #                             path = file.path(pathInputs, paste0(basename2(tools::file_path_sans_ext(fileName)), ".zip")))
@@ -206,11 +212,11 @@ yearsList <- lapply(X = years, FUN = function(y){
       return(stack(fileName))
     } else {
       # B1. If we don't have it in the cloud, (use the years in file name), make it from the original layer.
-      message(yellow(paste0(fileName, " does not exist locally nor in the cloud. Creating layers... ")))
+      message(yellow(paste0(fileName, " does not exist locally nor in the cloud or needs to be overwritten. Creating layers... ")))
       fullDatasetName <- drive_get(as_id(climateFilePath))$name
-      if (!file.exists(file.path(pathInputs, fullDatasetName))){
+      if (any(!file.exists(file.path(pathInputs, fullDatasetName)), isTRUE(overwriteOriginalData))){
         message(red(paste0(fullDatasetName, " does not exist in your pathInputs (", pathInputs,
-                                   "). Downloading, unzipping and creating layers... This might take a few hours")))
+                                   ") or needs to be overwritten. Downloading, unzipping and creating layers... This might take a few hours")))
         preProcess(url = climateFilePath,
                                  filename2 = fullDatasetName,
                                  destinationPath = pathInputs) # Currently not working well. Downloads, but doesn't unzip. Needs to be implemented in prepInputs
@@ -231,6 +237,30 @@ yearsList <- lapply(X = years, FUN = function(y){
         return(ras)
       })
       )
+      # Fixing the layers for the values that were multiplied by 10 in ClimateNA V6.11
+      # The variables to potentially fix are:
+      # •	Annual: MAT, MWMT, MCMT, TD, AHM, SHM, EMT, EXT and MAR;
+      # •	Seasonal: Tmax, Tmin, Tave and Rad;
+      # •	Monthly: Tmax, Tmin, Tave and Rad.'
+      variablesStack <- raster::stack(lapply(names(variablesStack), function(lay){
+        if (lay %in% c("MAT", "MWMT", "MCMT", "TD", "AHM", "SHM", "EMT", "EXT", "MAR",
+                       paste0("Tmax0", doughtMonths),
+                       paste0("Tmin0", doughtMonths),
+                       paste0("Tave0", doughtMonths),
+                       paste0("Rad0", doughtMonths),
+                       paste0("Rad_", c("wt", "sm", "at", "sp")),
+                       paste0("Tmax_", c("wt", "sm", "at", "sp")),
+                       paste0("Tmin_", c("wt", "sm", "at", "sp")),
+                       paste0("Tave_", c("wt", "sm", "at", "sp")))){
+          message(crayon::red(paste0("ClimateNA 6.11 multiplies ", lay, "by 10 for storage.",
+                                     "Backtransforming the layer")))
+          variablesStack[[lay]] <- variablesStack[[lay]]/10
+          return(variablesStack[[lay]])
+        } else {
+          return(variablesStack[[lay]])
+        }
+      }))
+
       # For fireSense, do the calculations already'
       if (all(model == "fireSense", isTRUE(returnCalculatedLayersForFireSense))){
         # Day length adjustement L_f in Drought Code (taken from Van Wagner 1987)
