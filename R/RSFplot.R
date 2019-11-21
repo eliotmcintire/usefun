@@ -79,7 +79,7 @@ stk <-  lapply(1:nlayers(x = r), function(lay){
 
     if(upload){
       if (is.null(folderID)) stop("Please provide folderID when upload == TRUE")
-      googledrive::drive_upload(file.path(outputFolder, rasNameFinal),
+      googledrive::drive_upload(file.path(rasNameFinal),
                                 path = googledrive::as_id(folderID))
     }
     message("Finished RSF like plot for ", rasName, " year ", y)
