@@ -217,11 +217,12 @@ yearsList <- lapply(X = years, FUN = function(y){
       if (any(!file.exists(file.path(pathInputs, fullDatasetName)), isTRUE(overwriteOriginalData))){
         message(red(paste0(fullDatasetName, " does not exist in your pathInputs (", pathInputs,
                                    ") or needs to be overwritten. Downloading, unzipping and creating layers... This might take a few hours")))
-        preProcess(url = climateFilePath,
+        preProcess(url = climateFilePath, targetFile = "MAP.asc", # targetFile just to avoid error
                                  filename2 = fullDatasetName,
                                  destinationPath = pathInputs) # Currently not working well. Downloads, but doesn't unzip. Needs to be implemented in prepInputs
-        # TEMPORARY SYSTEM CALL WITH THE OPTION x - this assumes you have '7za'
-        system(paste0("7za x ", file.path(pathInputs, fullDatasetName))) # ==> This hasn't been tested with the full file path. Just guessing it works... done by hand
+        # 26NOV19: preProcess works, but need to specify targetFile
+        # # TEMPORARY SYSTEM CALL WITH THE OPTION x - this assumes you have '7za'. Possibly not necessary as preProcess seems to be working. Testing again.
+        # system(paste0("7za x ", file.path(pathInputs, fullDatasetName))) # ==> This hasn't been tested with the full file path. Just guessing it works... done by hand
       }
       datasetsPath <- file.path(pathInputs, file_path_sans_ext(fullDatasetName))
       folders <- setdiff(list.dirs(path = datasetsPath), datasetsPath) # excluding original folder from the variable
