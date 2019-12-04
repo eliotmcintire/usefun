@@ -60,7 +60,7 @@ prepareClimateLayers <- function(pathInputs = NULL,
                                  fileResolution = NULL,
                                  authEmail = NULL,
                                  RCP = NULL, # 45
-                                 climateModel = NULL, # CanESM2
+                                 climateModel = NULL, # CCSM ~CanESM2~ ==> On 21stNOV19 changed to CCSM due to the "squareness" of CanESM2
                                  ensemble = NULL, # r11i1p1
                                  rasterToMatch = NULL,
                                  studyArea = NULL,
