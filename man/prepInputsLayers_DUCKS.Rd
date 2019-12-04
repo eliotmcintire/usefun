@@ -4,14 +4,8 @@
 \alias{prepInputsLayers_DUCKS}
 \title{Prepare DUCKS layer}
 \usage{
-prepInputsLayers_DUCKS(
-  destinationPath,
-  url = NULL,
-  archive = NULL,
-  targetFile = NULL,
-  studyArea = NULL,
-  rasterToMatch = NULL
-)
+prepInputsLayers_DUCKS(destinationPath, url = NULL, archive = NULL,
+  targetFile = NULL, studyArea = NULL, rasterToMatch = NULL)
 }
 \arguments{
 \item{destinationPath}{Path where to save the downloaded file.}

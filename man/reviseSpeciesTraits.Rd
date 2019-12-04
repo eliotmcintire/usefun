@@ -4,14 +4,10 @@
 \alias{reviseSpeciesTraits}
 \title{Bootstraps rasters for testing significancy on comparable rasters of different species or scenarios}
 \usage{
-reviseSpeciesTraits(
-  speciesTable = NULL,
-  updatedTable = NULL,
-  destinationPath = tempdir(),
-  returnTable = FALSE,
-  species = c("BETU.PAP", "LARI.LAR", "PICE.GLA", "PICE.MAR", "PINU.BAN", "POPU.TRE",
-    "PINU.CON")
-)
+reviseSpeciesTraits(speciesTable = NULL, updatedTable = NULL,
+  destinationPath = tempdir(), returnTable = FALSE,
+  species = c("BETU.PAP", "LARI.LAR", "PICE.GLA", "PICE.MAR", "PINU.BAN",
+  "POPU.TRE", "PINU.CON"))
 }
 \arguments{
 \item{speciesTable}{data.table. Table to be updated. If returnTable == TRUE this can be NULL.
