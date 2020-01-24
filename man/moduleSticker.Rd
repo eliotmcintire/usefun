@@ -4,8 +4,14 @@
 \alias{moduleSticker}
 \title{Function to create stikers for SpaDES modules}
 \usage{
-moduleSticker(moduleTable = NULL, moduleName, directory = getwd(),
-  useCache = NULL, savedSticker = NULL, ...)
+moduleSticker(
+  moduleTable = NULL,
+  moduleName,
+  directory = getwd(),
+  useCache = NULL,
+  savedSticker = NULL,
+  ...
+)
 }
 \arguments{
 \item{moduleTable}{Table with the information to generate the sticker (i.e. figure name, height, colors, etc)}

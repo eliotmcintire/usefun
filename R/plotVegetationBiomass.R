@@ -37,7 +37,7 @@ plotVegetationBiomass <- function(years = c(2011, 2100),
       return(stk)
     }
   }
-#  browser() # just commented out 09DEC19 :: why was it here...?
+ browser() # just commented out 09DEC19 :: why was it here...? because the function isnt working properly
   cohorDataList <- lapply(years, FUN = function(y){
   tbl <- bringObjectTS(path = dataPath, rastersNamePattern = c("cohortData", y))
     return(tbl[[1]])
@@ -48,7 +48,7 @@ plotVegetationBiomass <- function(years = c(2011, 2100),
     return(tbl[[1]])
   })
   names(pixelGroupList) <- paste0("Year", years)
-#  browser() # just commented out 09DEC19 :: why was it here...?
+ browser() # just commented out 09DEC19 :: why was it here...?
   # BIOMASS ~~~~~~~~~~~~~~~~
     maxBiomassPlot <- lapply(X = c(1:length(cohorDataList)), function(index){
     cohort <- cohorDataList[[index]]

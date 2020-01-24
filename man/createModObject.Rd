@@ -6,8 +6,7 @@
 searches for it in an input folder (i.e. saved outputs). This function
 simulates the existence of a sim list with specific objects in time t.}
 \usage{
-createModObject(data, sim = NULL, pathInput, currentTime,
-  fun = readRDS)
+createModObject(data, sim = NULL, pathInput, currentTime, fun = readRDS)
 }
 \arguments{
 \item{data}{character string of the object or file name to be searched for}

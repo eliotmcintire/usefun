@@ -5,8 +5,12 @@
 \title{Preparing study area for Simulation of effects of climate change on fire regime:
 implications for BCR6 Caribou and landbird communities in the Northwest Territories project}
 \usage{
-defineStudyArea(testArea = NULL, specificTestArea = NULL,
-  mapSubset = NULL, ...)
+defineStudyArea(
+  testArea = NULL,
+  specificTestArea = NULL,
+  mapSubset = NULL,
+  ...
+)
 }
 \arguments{
 \item{testArea}{Logical. Indicates if the test area should

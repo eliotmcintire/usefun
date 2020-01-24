@@ -4,9 +4,15 @@
 \alias{totalBiomassPerSpecies}
 \title{Plots biomass per species: proportional or absolute, and total or just overstory}
 \usage{
-totalBiomassPerSpecies(dataPath, typeSim, proportional = FALSE,
-  columnsType = FALSE, overstory = FALSE, overwrite = FALSE,
-  maxVal = 2e+10)
+totalBiomassPerSpecies(
+  dataPath,
+  typeSim,
+  proportional = FALSE,
+  columnsType = FALSE,
+  overstory = FALSE,
+  overwrite = FALSE,
+  maxVal = 2e+10
+)
 }
 \arguments{
 \item{dataPath}{character. Path to data}

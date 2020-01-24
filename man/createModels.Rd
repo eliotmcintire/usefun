@@ -8,14 +8,26 @@ This function uses \code{usefun::createEquation()} internally}
 \usage{
 createModels(caribouCoefTable = NULL, modelsToUse = "M3")
 
-prepareClimateLayers(pathInputs = NULL, variables = NULL,
-  years = NULL, GDriveFolder = NULL, climateFilePath = NULL,
-  fileResolution = NULL, authEmail = NULL, RCP = NULL,
-  climateModel = NULL, ensemble = NULL, rasterToMatch = NULL,
-  studyArea = NULL, model = NULL, doughtMonths = 4:9,
+prepareClimateLayers(
+  pathInputs = NULL,
+  variables = NULL,
+  years = NULL,
+  GDriveFolder = NULL,
+  climateFilePath = NULL,
+  fileResolution = NULL,
+  authEmail = NULL,
+  RCP = NULL,
+  climateModel = NULL,
+  ensemble = NULL,
+  rasterToMatch = NULL,
+  studyArea = NULL,
+  model = NULL,
+  doughtMonths = 4:9,
   returnCalculatedLayersForFireSense = FALSE,
-  yearsWithClimateProjections = 2011:2100, overwrite = FALSE,
-  overwriteOriginalData = FALSE)
+  yearsWithClimateProjections = 2011:2100,
+  overwrite = FALSE,
+  overwriteOriginalData = FALSE
+)
 }
 \arguments{
 \item{caribouCoefTable}{data.table of the coefficient values for all models available. If not provided,

@@ -4,8 +4,13 @@
 \alias{plotLeadingVegetationType}
 \title{Plots Leading Vegetation Type using cohortData and pixelGroupMap}
 \usage{
-plotLeadingVegetationType(dataPath, typeSim, colNA = "grey85",
-  saveRAS = TRUE, overwrite = FALSE)
+plotLeadingVegetationType(
+  dataPath,
+  typeSim,
+  colNA = "grey85",
+  saveRAS = TRUE,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{dataPath}{character. Path to data}
