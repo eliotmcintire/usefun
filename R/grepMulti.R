@@ -12,7 +12,7 @@
 #' @export
 #' @rdname grepMulti
 
-grepMulti2 <- function(x, patterns, unwanted = NULL) {
+grepMulti <- function(x, patterns, unwanted = NULL) {
   rescued <- sapply(x, function(fun) all(sapply(X = patterns, FUN = grepl, fun)))
   recovered <- x[rescued]
   if (!is.null(unwanted)){
