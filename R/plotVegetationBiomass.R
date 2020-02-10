@@ -37,7 +37,7 @@ plotVegetationBiomass <- function(years = c(2011, 2100),
       return(stk)
     }
   }
- browser() # just commented out 09DEC19 :: why was it here...? because the function isnt working properly
+# browser() # just commented out 09DEC19 :: why was it here...? because the function isnt working properly. Apparently it is...? Feb 9th 2020
   cohorDataList <- lapply(years, FUN = function(y){
   tbl <- bringObjectTS(path = dataPath, rastersNamePattern = c("cohortData", y))
     return(tbl[[1]])
@@ -48,7 +48,7 @@ plotVegetationBiomass <- function(years = c(2011, 2100),
     return(tbl[[1]])
   })
   names(pixelGroupList) <- paste0("Year", years)
- browser() # just commented out 09DEC19 :: why was it here...?
+# browser() # just commented out 09DEC19 :: why was it here...?
   # BIOMASS ~~~~~~~~~~~~~~~~
     maxBiomassPlot <- lapply(X = c(1:length(cohorDataList)), function(index){
     cohort <- cohorDataList[[index]]
@@ -79,14 +79,21 @@ plotVegetationBiomass <- function(years = c(2011, 2100),
       par(mfrow=c(length(years)/2,length(years)))
     }
   }
-
+  
   png(filename = file.path(dataPath, paste0("biomassVegetation", typeSim, ".png")), height = 600, width = 900)
   quickPlot::clearPlot()
   plot(maxBiomassPlot[[1]], breaks = brks, col = cols, lab.breaks = brks,
        main = paste0('Max biomass ', names(maxBiomassPlot)[[1]], " - ", typeSim), colNA = colNA)
   plot(maxBiomassPlot[[2]], breaks = brks, col = cols, lab.breaks = brks,
        main = paste0('Max biomass ', names(maxBiomassPlot)[[2]], " - ", typeSim), colNA = colNA)
-  p <- recordPlot()
-  dev.off()
-  return(p)
+
+  shouldPlot <- FALSE #TODO MAKE IT A PARAMETER. SET TO FALSE FOR SERVER
+  if(shouldPlot){
+p <- recordPlot()
+  dev.off()    
+      return(p)
+} else {
+      dev.off()
+  return(NULL)
+  }  
 }
