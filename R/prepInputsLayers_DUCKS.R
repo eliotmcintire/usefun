@@ -8,13 +8,15 @@
 #' @param url The url from where the layer should be downloaded from. if \code{NULL}, the default is \code{}
 #' @param studyArea Study area for which the layer should be cropped to
 #' @param rasterToMatch If output rasters should
+#' @param lccLayer Which year should be used as a base for the vegetation layer? Default to 2005
 #'
 #' @return RasterLayer
 #'
 #' @export
 #' @importFrom reproducible asPath Cache prepInputs
+#' @include classifyWetlands
 #' @rdname prepInputsLayers_DUCKS
-prepInputsLayers_DUCKS <- function(destinationPath,
+prepInputsLayers_DUCKS <- function(destinationPath, lccLayer = "2005",
                                    url = NULL, archive = NULL,
                                    targetFile = NULL,
                                    studyArea = NULL,
@@ -42,8 +44,12 @@ prepInputsLayers_DUCKS <- function(destinationPath,
                           overwrite = overwrite,
                           userTags =  c("DUCKs", "Hybrid", "Wetland"))
 
-      message(crayon::green("  DUCKS Unlimited Hybrid Wetland v. 2.1 layers successfully loaded"))
-    return(DUCKSlayer)
+      message(crayon::green("  DUCKS Unlimited Hybrid Wetland v. 2.1 layers successfully loaded."))
+
+      DUCKSlayerReclass <- classifyWetlands(LCC = lccLayer, wetLayerInput = DUCKSlayer,
+                                                    pathData = destinationPath, studyArea = studyArea)
+
+    return(DUCKSlayerReclass)
   }, error = function(e){
     message(crayon::red(paste0("  Downloading DUCKS Unlimited Hybrid Wetland v. 2.1 layers failed. This is probably a restriction access issue.
                                A wetlands layer based on LCC05 will be downloaded instead.")))
