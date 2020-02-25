@@ -32,8 +32,8 @@
 classifyWetlands <- function(LCC,
                              wetLayerInput,
                              pathData,
-                             studyArea,
-                             RasterToMatch){
+                             studyArea = NULL,
+                             RasterToMatch = NULL){
   Require("LandR")
   Require("raster")
 
@@ -55,7 +55,6 @@ classifyWetlands <- function(LCC,
   wetLocations <- xyFromCell(wetLayerInput, wetIndex)
   watLocations <- xyFromCell(wetLayerInput, watIndex)
   upLocations <- xyFromCell(wetLayerInput, upIndex)
-  browser()
   lcc05Lakes <- as.data.table(raster::extract(rasLCC, lakes, cellnumbers = TRUE)) ###
   lcc05Wetlands <- as.data.table(raster::extract(rasLCC, wetLocations, cellnumbers = TRUE))
   lcc05Water <- as.data.table(raster::extract(rasLCC, watLocations, cellnumbers = TRUE))
@@ -65,7 +64,7 @@ classifyWetlands <- function(LCC,
   # This way we would have more than 1 pixel ID in the LCC represented by more than 1 pixel in the DUCKS layer...
   # Using the default one for the NWT, we are never going to have more than 1 pixel here
   # # Calculate how many times each pixel index exists
-  countLake <- lcc05Lakes[, .N, by = cells] ###
+  countLake <- lcc05Lakes[, .N, by = cells]
   countWet <- lcc05Wetlands[, .N, by = cells]
   countWat <- lcc05Water[, .N, by = cells]
   countUp <- lcc05Uplands[, .N, by = cells]
@@ -93,7 +92,7 @@ classifyWetlands <- function(LCC,
 
   # Mask it with RTM
 if (exists("RasterToMatch")){
-  prepRTM <- reproducible::postProcess(rasterToMatch, rasterToMatch = lccWetLayer, filename2 = NULL)
+  prepRTM <- reproducible::postProcess(RasterToMatch, rasterToMatch = lccWetLayer, filename2 = NULL)
 } else
   prepRTM <- NULL
 
