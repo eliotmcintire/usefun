@@ -45,7 +45,6 @@ prepInputsLayers_DUCKS <- function(destinationPath,
       message(crayon::green("  DUCKS Unlimited Hybrid Wetland v. 2.1 layers successfully loaded"))
     return(DUCKSlayer)
   }, error = function(e){
-    browser()
     message(crayon::red(paste0("  Downloading DUCKS Unlimited Hybrid Wetland v. 2.1 layers failed. This is probably a restriction access issue.
                                A wetlands layer based on LCC05 will be downloaded instead.")))
     url <- "https://drive.google.com/open?id=10RRHsy2vX6xaOLNPQSvz66k-xn_4X7GY"
