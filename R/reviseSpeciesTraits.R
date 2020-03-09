@@ -16,7 +16,7 @@
 #' @importFrom LandR getSpeciesTable
 #'
 #' @rdname reviseSpeciesTraits
-
+#' @export
 reviseSpeciesTraits <- function(speciesTable = NULL, updatedTable = NULL,
                                 destinationPath = tempdir(),
                                 returnTable = FALSE,
