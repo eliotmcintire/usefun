@@ -28,7 +28,6 @@
 #' @importFrom data.table data.table
 #' @importFrom reproducible prepInputs postProcess Require
 #' @rdname classifyWetlands
-
 classifyWetlands <- function(LCC,
                              wetLayerInput,
                              pathData,

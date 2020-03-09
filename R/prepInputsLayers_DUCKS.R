@@ -14,7 +14,7 @@
 #'
 #' @export
 #' @importFrom reproducible asPath Cache prepInputs
-#' @include classifyWetlands
+#' @include classifyWetlands.R
 #' @rdname prepInputsLayers_DUCKS
 prepInputsLayers_DUCKS <- function(destinationPath, lccLayer = "2005",
                                    url = NULL, archive = NULL,

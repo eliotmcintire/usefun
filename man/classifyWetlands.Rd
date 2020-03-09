@@ -4,7 +4,13 @@
 \alias{classifyWetlands}
 \title{classifyWetlands classifies wetlands (really!) using the wetlands layer set as input and a either LCC05 or LCC2010}
 \usage{
-classifyWetlands(LCC, wetLayerInput, pathData, studyArea, RasterToMatch)
+classifyWetlands(
+  LCC,
+  wetLayerInput,
+  pathData,
+  studyArea = NULL,
+  RasterToMatch = NULL
+)
 }
 \arguments{
 \item{LCC}{numeric. 2005 (250m resolution) or 2010 (30m resolution) landcover  rasters.}
